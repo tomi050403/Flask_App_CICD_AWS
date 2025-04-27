@@ -1,0 +1,16 @@
+name: github actions test
+on: workflow_dispatch
+
+jobs:
+  test1:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "test"
+      - run: echo "hi githubactions!!!"
+
+  test2:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "test workflow_dispatch"
+      - run: echo "bye"
+      
