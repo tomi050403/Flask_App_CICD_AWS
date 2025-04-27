@@ -9,6 +9,7 @@ jobs:
       - run: echo "hi githubactions!!!"
 
   test2:
+    needs: test1
     runs-on: ubuntu-latest
     steps:
       - run: echo "test workflow_dispatch"
