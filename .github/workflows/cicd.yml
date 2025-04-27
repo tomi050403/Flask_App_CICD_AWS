@@ -1,5 +1,5 @@
 name: github actions test
-on: push
+on: workflow_dispatch
 
 jobs:
   test1:
@@ -8,3 +8,9 @@ jobs:
       - run: echo "test"
       - run: echo "hi githubactions!!!"
 
+  test2:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "test workflow_dispatch"
+      - run: echo "bye"
+      
