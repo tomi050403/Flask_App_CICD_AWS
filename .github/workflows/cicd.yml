@@ -1,17 +1,36 @@
 name: github actions test
-on: workflow_dispatch
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/terraform
+    paths:
+      - .github/cicd.yml
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  TF_VERSION: 1.11.2
 
 jobs:
-  test1:
+  Terraform-Preview:
+    name: "Terraform-Preview"
     runs-on: ubuntu-latest
     steps:
-      - run: echo "test"
-      - run: echo "hi githubactions!!!"
-
-  test2:
-    needs: test1
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "test workflow_dispatch"
-      - run: echo "bye"
+      - name: Checkoup repository
+        users: actions/checkout@v4
       
+      - name: Terraform setup
+        usres: hashicorp/setup-terrafrom@v3
+        with:
+          terraform_version: ${{ TF_VERSION }}
+          terraform_wrapper: false
+
+  # test2:
+  #   needs: test1
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: echo "test workflow_dispatch"
