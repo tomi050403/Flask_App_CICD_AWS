@@ -6,7 +6,7 @@ on:
     branches:
       - feature/terraform
     paths:
-      - .github/cicd.yml
+      - .github/workflows/cicd.yml
 
 defaults:
   run:
