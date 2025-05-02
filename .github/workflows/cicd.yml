@@ -21,10 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkoup repository
-        users: actions/checkout@v4
+        uses: actions/checkout@v4
       
       - name: Terraform setup
-        usres: hashicorp/setup-terrafrom@v3
+        uses: hashicorp/setup-terrafrom@v3
         with:
           terraform_version: ${{ TF_VERSION }}
           terraform_wrapper: false
