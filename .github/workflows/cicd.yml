@@ -17,6 +17,10 @@ env:
   TF_VERSION: 1.11.2
   TF_EXECUTE_PATH: 01_terraform/flask-app/environments/dev/
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   Terraform-Preview:
     name: "Terraform-Preview"
