@@ -20,7 +20,7 @@ jobs:
     name: "Terraform-Preview"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkoup repository
+      - name: Checkout repository
         uses: actions/checkout@v4
       
       - name: Terraform setup
@@ -29,6 +29,9 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
           terraform_wrapper: false
 
+      - name: env check
+        run: |
+          echo "ENV_CHECK"
   # test2:
   #   needs: test1
   #   runs-on: ubuntu-latest
