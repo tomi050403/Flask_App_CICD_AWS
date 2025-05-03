@@ -31,7 +31,7 @@ jobs:
 
       - name: env check
         run: |
-          echo "${{ ENV_CHECK }}"
+          echo $ENV_CHECK
   # test2:
   #   needs: test1
   #   runs-on: ubuntu-latest
