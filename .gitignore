@@ -41,4 +41,3 @@ terraform.rc
 
 ### flask-app
 01_terraform/flask-app/src/*
-01_terraform/flask-app/environments/dev/terraform.tfvars
