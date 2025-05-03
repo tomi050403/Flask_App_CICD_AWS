@@ -33,21 +33,21 @@ variable "region" {
 # ---
 # Network
 # ---
-# module "network" {
-#   source = "../../modules/network"
+module "network" {
+  source = "../../modules/network"
 
-#   project     = var.project
-#   environment = var.environment
-#   region      = var.region
+  project     = var.project
+  environment = var.environment
+  region      = var.region
 
-#   vpc_cidr_block  = var.vpc_cidr_block
-#   AZ_1            = var.AZ_1
-#   AZ_1_publicsub  = var.AZ_1_publicsub
-#   AZ_1_privatesub = var.AZ_1_privatesub
-#   AZ_2            = var.AZ_2
-#   AZ_2_publicsub  = var.AZ_2_publicsub
-#   AZ_2_privatesub = var.AZ_2_privatesub
-# }
+  vpc_cidr_block  = var.vpc_cidr_block
+  AZ_1            = var.AZ_1
+  AZ_1_publicsub  = var.AZ_1_publicsub
+  AZ_1_privatesub = var.AZ_1_privatesub
+  AZ_2            = var.AZ_2
+  AZ_2_publicsub  = var.AZ_2_publicsub
+  AZ_2_privatesub = var.AZ_2_privatesub
+}
 
 # ---
 # Alb
