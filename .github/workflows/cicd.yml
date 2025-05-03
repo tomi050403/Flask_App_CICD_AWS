@@ -51,7 +51,17 @@ jobs:
           terraform validate
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-
+      - name: terraform plan
+        id: tf-plan
+        continue-on-error: true
+        run: |
+          set +e
+          terraform plan \
+            -var 'project=${{ env.TF_PROJECT }}' \
+            -var 'environment=${{ env.TF_ENVIRONMENT }}' \
+            -input=false \
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
+  
   # test2:
   #   needs: test1
   #   runs-on: ubuntu-latest
