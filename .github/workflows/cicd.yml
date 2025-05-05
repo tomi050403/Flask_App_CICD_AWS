@@ -7,7 +7,7 @@ on:
       - feature/terraform
     paths:
       - .github/workflows/cicd.yml
-      - 01_terraform/*
+      - 01_terraform/flask-app/environments/dev/*
 
 defaults:
   run:

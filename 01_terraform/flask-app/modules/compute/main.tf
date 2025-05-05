@@ -1,16 +1,16 @@
 # ---
 # Key Pair
 # ---
-resource "aws_key_pair" "keypair" {
-  key_name   = "${var.project}-${var.environment}-keypair"
-  public_key = file("../../src/flask-app-project.pub")
+# resource "aws_key_pair" "keypair" {
+#   key_name   = "${var.project}-${var.environment}-keypair"
+#   public_key = file("../../src/flask-app-project.pub")
 
-  tags = {
-    Name    = "${var.project}-${var.environment}-keypair"
-    Project = var.project
-    Env     = var.environment
-  }
-}
+#   tags = {
+#     Name    = "${var.project}-${var.environment}-keypair"
+#     Project = var.project
+#     Env     = var.environment
+#   }
+# }
 
 # ---
 # EC2 instance
@@ -24,7 +24,7 @@ resource "aws_instance" "appsv" {
   vpc_security_group_ids      = [var.app_sg_id]
   iam_instance_profile        = var.ec2_profile_name
 
-  key_name = aws_key_pair.keypair.key_name
+  key_name = "GHA-FLASK-APP"
 
   tags = {
     Name    = "${var.project}-${var.environment}-appsv"
