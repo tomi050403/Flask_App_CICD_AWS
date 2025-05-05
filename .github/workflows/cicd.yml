@@ -101,15 +101,15 @@ jobs:
             -backend-config="region="ap-northeast-1""
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-      - name: terraform des
-        run: |
-          terraform destroy -auto-approve
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
-
-      # - name: terraform apply
+      # - name: terraform des
       #   run: |
-      #     terraform apply -auto-approve
+      #     terraform destroy -auto-approve
       #   working-directory: ${{ env.TF_EXECUTE_PATH }}
+
+      - name: terraform apply
+        run: |
+          terraform apply -auto-approve
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
 
 
   # test2:
