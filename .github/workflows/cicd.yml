@@ -7,6 +7,7 @@ on:
       - feature/terraform
     paths:
       - .github/workflows/cicd.yml
+      - 01_terraform/*
 
 defaults:
   run:
@@ -16,6 +17,8 @@ env:
   AWS_REGION: ap-northeast-1
   TF_VERSION: 1.11.2
   TF_EXECUTE_PATH: 01_terraform/flask-app/environments/dev/
+
+  TF_VAR_ALB_from_IP: ${{ secrets.ALB_FROM_IP }}
 
 permissions:
   id-token: write
