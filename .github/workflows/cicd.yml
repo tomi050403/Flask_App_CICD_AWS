@@ -18,7 +18,13 @@ env:
   TF_VERSION: 1.11.2
   TF_EXECUTE_PATH: 01_terraform/flask-app/environments/dev/
 
+  TF_VAR_project: ${{ vars.PRJ_01_PROJECT }}
+  TF_VAR_environment: ${{ vars.PRJ_02_ENVIRONMENT }}
+  TF_VAR_region: ${{ vars.PRJ_03_REGION }}
+  TF_VAR_backend_bucket: ${{ secrets.BED_01_BACKEND_BUCKET }}
+  TF_VAR_backend_key: ${{ secrets.BED_02_BACKEND_KEY }}
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
+  TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
 
 permissions:
   id-token: write
@@ -89,10 +95,15 @@ jobs:
           terraform init
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-      - name: terraform apply
+      - name: terraform des
         run: |
-          terraform apply -auto-approve
+          terraform destroy -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
+
+      # - name: terraform apply
+      #   run: |
+      #     terraform apply -auto-approve
+      #   working-directory: ${{ env.TF_EXECUTE_PATH }}
 
 
   # test2:

@@ -9,6 +9,11 @@ terraform {
       version = "~> 3.0"
     }
   }
+  backend "s3" {
+    bucket  = var.backend_bucket
+    key     = var.backend_key
+    region  = "ap-northeast-1"
+  }
 }
 
 provider "aws" {
@@ -28,6 +33,14 @@ variable "environment" {
 
 variable "region" {
   type = string
+}
+
+variable "backend_bucket" {
+  type = string
+}
+
+variable "backend_key" {
+  type = string  
 }
 
 # ---
