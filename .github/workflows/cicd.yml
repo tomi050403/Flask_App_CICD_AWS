@@ -106,10 +106,10 @@ jobs:
       #     terraform destroy -auto-approve
       #   working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-      # - name: terraform apply
-      #   run: |
-      #     terraform apply -auto-approve
-      #   working-directory: ${{ env.TF_EXECUTE_PATH }}
+      - name: terraform apply
+        run: |
+          terraform apply -auto-approve
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
 
 
   # test2:
