@@ -1,11 +1,3 @@
-variable "backend_bucket" {
-  type = string
-}
-
-variable "backend_key" {
-  type = string  
-}
-
 ########################################################
 ### network
 variable "vpc_cidr_block" {
