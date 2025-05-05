@@ -43,7 +43,7 @@ resource "aws_instance" "websv" {
   vpc_security_group_ids      = [var.web_sg_id]
   iam_instance_profile        = var.ec2_profile_name
 
-  key_name = aws_key_pair.keypair.key_name
+  key_name = "GHA-FLASK-APP"
 
   tags = {
     Name    = "${var.project}-${var.environment}-websv"
