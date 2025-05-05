@@ -9,11 +9,6 @@ terraform {
       version = "~> 3.0"
     }
   }
-  backend "s3" {
-    bucket  = var.backend_bucket
-    key     = var.backend_key
-    region  = "ap-northeast-1"
-  }
 }
 
 provider "aws" {
