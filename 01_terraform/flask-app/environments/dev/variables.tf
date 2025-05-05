@@ -33,7 +33,7 @@ variable "AZ_2_privatesub" {
 ### Security
 variable "ALB_from_IP" {
   type = string
-  sensitive = true
+  # sensitive = true
 }
 
 ########################################################
