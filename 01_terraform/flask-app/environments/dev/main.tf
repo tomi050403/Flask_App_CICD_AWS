@@ -52,22 +52,22 @@ module "network" {
 # ---
 # Alb
 # ---
-module "alb" {
-  source = "../../modules/alb"
+# module "alb" {
+#   source = "../../modules/alb"
 
-  project     = var.project
-  environment = var.environment
-  region      = var.region
+#   project     = var.project
+#   environment = var.environment
+#   region      = var.region
 
-  web_sg_id         = module.security.web_sg_id
-  alb_sg_id         = module.security.alb_sg_id
-  vpc_id            = module.network.vpc_id
-  public_subnet_1a  = module.network.public_subnet_1a
-  public_subnet_1c  = module.network.public_subnet_1c
-  private_subnet_1a = module.network.private_subnet_1a
-  private_subnet_1c = module.network.private_subnet_1c
-  web_server_id     = module.compute.web_server_id
-}
+#   web_sg_id         = module.security.web_sg_id
+#   alb_sg_id         = module.security.alb_sg_id
+#   vpc_id            = module.network.vpc_id
+#   public_subnet_1a  = module.network.public_subnet_1a
+#   public_subnet_1c  = module.network.public_subnet_1c
+#   private_subnet_1a = module.network.private_subnet_1a
+#   private_subnet_1c = module.network.private_subnet_1c
+#   web_server_id     = module.compute.web_server_id
+# }
 
 # ---
 # Security
