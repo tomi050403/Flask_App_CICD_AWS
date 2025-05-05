@@ -32,14 +32,6 @@ variable "region" {
   type = string
 }
 
-variable "backend_bucket" {
-  type = string
-}
-
-variable "backend_key" {
-  type = string  
-}
-
 # ---
 # Network
 # ---
@@ -116,25 +108,25 @@ module "compute" {
   ec2_profile_name  = module.iam.ec2_profile_name
 }
 
-# # ---
-# # RDS
-# # ---
-# module "rds" {
-#   source = "../../modules/rds"
+# ---
+# RDS
+# ---
+module "rds" {
+  source = "../../modules/rds"
 
-#   project     = var.project
-#   environment = var.environment
-#   region      = var.region
+  project     = var.project
+  environment = var.environment
+  region      = var.region
 
-#   rds_instance_class  = var.rds_instance_class
-#   rds_username        = var.rds_username
-#   rds_az_none_multiaz = var.rds_az_none_multiaz
-#   rds_db_name         = var.rds_db_name
+  rds_instance_class  = var.rds_instance_class
+  rds_username        = var.rds_username
+  rds_az_none_multiaz = var.rds_az_none_multiaz
+  rds_db_name         = var.rds_db_name
 
-#   private_subnet_1a = module.network.private_subnet_1a
-#   private_subnet_1c = module.network.private_subnet_1c
-#   rds_sg_id         = module.security.rds_sg_id
-# }
+  private_subnet_1a = module.network.private_subnet_1a
+  private_subnet_1c = module.network.private_subnet_1c
+  rds_sg_id         = module.security.rds_sg_id
+}
 
 
 # ---
