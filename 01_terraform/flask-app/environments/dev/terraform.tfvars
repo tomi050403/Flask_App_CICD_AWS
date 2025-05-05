@@ -13,7 +13,7 @@ AZ_2_publicsub  = "10.10.2.0/24"      # AZ2のパブリックサブネット
 AZ_2_privatesub = "10.10.12.0/24"     # AZ2のプライベートサブネット
 
 ### security settings
-ALB_from_IP = "0.0.0.0/0"     # ALBのアクセス許可元IP（CIDR形式。アプリケーション公開範囲を必要に応じて設定）
+# ALB_from_IP = "0.0.0.0/0"     # ALBのアクセス許可元IP（CIDR形式。アプリケーション公開範囲を必要に応じて設定）
 
 ### compute settings
 appsv_instance_type = "t2.micro"                # Appサーバのインスタンスタイプ
