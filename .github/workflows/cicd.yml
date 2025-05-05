@@ -60,6 +60,37 @@ jobs:
             -input=false \
         working-directory: ${{ env.TF_EXECUTE_PATH }}
   
+
+  Terraform-apply:
+    name: "Terraform-Preview"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: terraform setup
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: terraform init
+        run: |
+          terraform init
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
+
+      - name: terraform apply
+        run: |
+          terraform apply -auto-approve
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
+
+
   # test2:
   #   needs: test1
   #   runs-on: ubuntu-latest
