@@ -75,7 +75,6 @@ jobs:
     name: "Terraform-Apply"
     needs: Terraform-Preview
     if: needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
-    environments: deploy-check
     runs-on: ubuntu-latest
     steps:
       - name: wait for manual trigger
