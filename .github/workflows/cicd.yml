@@ -125,6 +125,22 @@ jobs:
     needs: Terraform-Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: echo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: setup value
         run: |
-          echo "test"
+          aws ssm get-parameter --with-decryption \
+            --query "Parameter.Value" \
+            --output text --name /flask-app-dev/DB_HOST \
+            > db_host.txt
+
+      - name: check value
+        run: |
+          cat db_host.txt
