@@ -117,6 +117,37 @@ jobs:
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
 
+
+  AWS_resouce_check:
+    name: "AWS_resouce_check"
+    needs: Terraform-Apply
+    if: needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: check parameter 1
+        run: |
+          aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_HOST
+
+      - name: check parameter 2
+        run: |
+          aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=flask-app-dev-appsv" \
+            "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output text
+
+      - name: check parameter 3
+        run: |
+          aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=flask-app-dev-websv" \
+            "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output text
+
+
   # test2:
   #   needs: test1
   #   runs-on: ubuntu-latest
