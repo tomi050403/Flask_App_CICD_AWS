@@ -120,7 +120,7 @@ jobs:
 
   AWS_resouce_check:
     name: "AWS_resouce_check"
-    needs: Terraform-Apply
+    needs: Terraform-Preview
     if: needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
     runs-on: ubuntu-latest
     steps:
