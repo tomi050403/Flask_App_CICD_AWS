@@ -144,11 +144,13 @@ jobs:
             --filters "Name=tag:Name,Values=flask-app-dev-appsv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
+            --output text \
             > app-i.txt
           aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=flask-app-dev-websv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
+            --output text \
             > web-i.txt
 
       - name: check value
