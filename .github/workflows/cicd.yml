@@ -34,6 +34,8 @@ jobs:
   Terraform-Preview:
     name: "Terraform-Preview"
     runs-on: ubuntu-latest
+    outputs:
+      TF_PLAN_EXITCODE: ${{ steps.tf-plan.outputs.TF_PLAN_EXITCODE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -70,12 +72,15 @@ jobs:
           set +e
           terraform plan \
             -input=false \
+          SET_EXIT_CODE=$?
+          echo "TF_PLAN_EXITCODE=$SET_EXIT_CODE" >> $GITHUB_OUTPUT
         working-directory: ${{ env.TF_EXECUTE_PATH }}
   
 
   Terraform-Apply:
     name: "Terraform-Apply"
     needs: Terraform-Preview
+    if: needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -101,15 +106,15 @@ jobs:
             -backend-config="region="ap-northeast-1""
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-      - name: terraform des
-        run: |
-          terraform destroy -auto-approve
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
-
-      # - name: terraform apply
+      # - name: terraform des
       #   run: |
-      #     terraform apply -auto-approve
+      #     terraform destroy -auto-approve
       #   working-directory: ${{ env.TF_EXECUTE_PATH }}
+
+      - name: terraform apply
+        run: |
+          terraform apply -auto-approve
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
 
 
   # test2:
