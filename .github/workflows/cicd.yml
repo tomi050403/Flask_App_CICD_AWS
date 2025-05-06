@@ -72,10 +72,10 @@ jobs:
           set +e
           terraform plan \
             -input=false \
+            -detailed-exitcode
           SET_EXIT_CODE=$?
           echo "TF_PLAN_EXITCODE=$SET_EXIT_CODE" >> $GITHUB_OUTPUT
         working-directory: ${{ env.TF_EXECUTE_PATH }}
-  
 
   Terraform-Apply:
     name: "Terraform-Apply"
