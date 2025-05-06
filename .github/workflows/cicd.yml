@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/terraform
+      - feature/ansible
     paths:
       - .github/workflows/**
   workflow_dispatch:
@@ -119,3 +119,12 @@ jobs:
         run: |
           terraform destroy -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
+
+  Ansible-app-deploy:
+    name: "Ansible-app-deploy"
+    needs: Terraform-Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: |
+          echo "test"
