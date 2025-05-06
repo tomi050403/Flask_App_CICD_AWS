@@ -1,13 +1,7 @@
-name: github actions test
+name: FLASK_APP_CICD_AWS_dev
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/terraform
-    paths:
-      - .github/workflows/cicd.yml
-      - 01_terraform/flask-app/environments/dev/*
 
 defaults:
   run:
@@ -80,7 +74,7 @@ jobs:
   Terraform-Apply:
     name: "Terraform-Apply"
     needs: Terraform-Preview
-    if: needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
+    if: needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -106,12 +100,7 @@ jobs:
             -backend-config="region="ap-northeast-1""
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-      - name: terraform des
+      - name: terraform apply
         run: |
-          terraform destroy -auto-approve
+          terraform apply -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
-
-      # - name: terraform apply
-      #   run: |
-      #     terraform apply -auto-approve
-      #   working-directory: ${{ env.TF_EXECUTE_PATH }}
