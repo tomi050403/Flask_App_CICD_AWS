@@ -133,11 +133,13 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
 
-      - name: check parameter 1
+      - name: check parameter RDS and check secret
         run: |
           aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_HOST
+          aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_USERNAME
+          aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_USERPASS
 
-      - name: check parameter 2
+      - name: check parameter appsv
         run: |
           aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=flask-app-dev-appsv" \
@@ -145,7 +147,7 @@ jobs:
             --query "Reservations[].Instances[].InstanceId" \
             --output text
 
-      - name: check parameter 3
+      - name: check parameter websv
         run: |
           aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=flask-app-dev-websv" \
