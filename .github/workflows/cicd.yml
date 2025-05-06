@@ -71,10 +71,12 @@ jobs:
           echo "TF_PLAN_EXITCODE=$SET_EXIT_CODE" >> $GITHUB_OUTPUT
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-  Terraform-Apply:
-    name: "Terraform-Apply"
+  Terraform-Deploy:
+    name: "Terraform-Deploy"
     needs: Terraform-Preview
-    if: needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
+    if: |
+      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2' ||
+      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -101,6 +103,13 @@ jobs:
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
       - name: terraform apply
+        if: contains(github.event.head_commit.message, '[apply]')
         run: |
           terraform apply -auto-approve
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
+
+      - name: terraform destory
+        if: contains(github.event.head_commit.message, '[destroy]')
+        run: |
+          terraform destory -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
