@@ -75,6 +75,7 @@ jobs:
     name: "Terraform-Apply"
     needs: Terraform-Preview
     if: needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
+    environments: deploy-check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -100,7 +101,7 @@ jobs:
             -backend-config="region="ap-northeast-1""
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-      - name: terraform apply
-        run: |
-          terraform apply -auto-approve
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+      # - name: terraform apply
+      #   run: |
+      #     terraform apply -auto-approve
+      #   working-directory: ${{ env.TF_EXECUTE_PATH }}
