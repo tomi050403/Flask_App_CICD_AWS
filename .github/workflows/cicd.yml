@@ -114,8 +114,8 @@ jobs:
           terraform apply -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-      - name: terraform destory
+      - name: terraform destroy
         if: contains(github.event.head_commit.message, '[destroy]')
         run: |
-          terraform destory -auto-approve
+          terraform destroy -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
