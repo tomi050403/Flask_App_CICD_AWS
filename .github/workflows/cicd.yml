@@ -2,6 +2,12 @@ name: FLASK_APP_CICD_AWS_dev
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/terraform
+    paths:
+      - .github/workflows/cicd.yml
+      - 01_terraform/flask-app/environments/dev/*
 
 defaults:
   run:
