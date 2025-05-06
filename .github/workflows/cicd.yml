@@ -75,6 +75,7 @@ jobs:
             -input=false \
             -detailed-exitcode
           SET_EXIT_CODE=$?
+          cat SET_EXIT_CODE
           echo "TF_PLAN_EXITCODE=$SET_EXIT_CODE" >> $GITHUB_OUTPUT
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
