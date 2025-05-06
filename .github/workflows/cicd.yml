@@ -78,6 +78,11 @@ jobs:
     environments: deploy-check
     runs-on: ubuntu-latest
     steps:
+      - name: wait for manual trigger
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "approve"
+
       - name: Checkout repository
         uses: actions/checkout@v4
       
