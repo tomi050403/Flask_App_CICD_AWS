@@ -7,6 +7,7 @@ on:
       - feature/ansible
     paths:
       - .github/workflows/**
+      - .trigger/change.txt
   workflow_dispatch:
 
 defaults:
