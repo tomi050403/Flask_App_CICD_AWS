@@ -1,6 +1,12 @@
 name: FLASK_APP_CICD_AWS_dev
 
 on:
+  push:
+    branches:
+      - main
+      - feature/terraform
+    paths:
+      - .github/workflows/**
   workflow_dispatch:
 
 defaults:
