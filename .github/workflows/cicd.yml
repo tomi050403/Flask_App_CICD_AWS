@@ -85,6 +85,7 @@ jobs:
     if: |
       needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2' ||
       needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
+    outputs: ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -122,12 +123,18 @@ jobs:
           terraform destroy -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
+      - name: terraform state check flag
+        id: tf-flag
+        run: |
+          test -z "$(terraform state list 2>/dev/null)" && echo "TF_STATE_FLAG=0" >> $GITHUB_OUTPUT || echo "TF_STATE_FLAG=1" >> $GITHUB_OUTPUT
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
+
+
   Ansible-app-deploy:
     name: "Ansible-app-deploy"
     needs: Terraform-Deploy
     if: |
-      !contains(github.event.head_commit.message, '[destroy]') &&
-      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE != '1'
+      needs.terraform-Deploy.outputs.TF_STATE_FLAG == 1
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
