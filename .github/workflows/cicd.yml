@@ -130,9 +130,10 @@ jobs:
           test -z "$(terraform state list 2>/dev/null)" && echo "TF_STATE_FLAG=0" >> $GITHUB_OUTPUT || echo "TF_STATE_FLAG=1" >> $GITHUB_OUTPUT
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
+      # flagチェック用
       - name: check flag
         run: |
-          echo ${{ needs.terraform-Deploy.outputs.TF_STATE_FLAG }}
+          echo ${{ needs.Terraform-Deploy.outputs.TF_STATE_FLAG }}
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
 
