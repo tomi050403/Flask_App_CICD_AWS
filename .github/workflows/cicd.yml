@@ -118,6 +118,12 @@ jobs:
           terraform apply -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
+      # 正式用
+      # - name: terraform apply
+      #   run: |
+      #     terraform apply -auto-approve
+      #   working-directory: ${{ env.TF_EXECUTE_PATH }}
+
       - name: terraform destroy
         if: contains(github.event.head_commit.message, '[destroy]')
         run: |
@@ -133,7 +139,7 @@ jobs:
       # flagチェック用
       - name: check flag
         run: |
-          echo ${{ needs.Terraform-Deploy.outputs.TF_STATE_FLAG }}
+          echo ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
 
