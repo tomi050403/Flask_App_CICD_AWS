@@ -132,7 +132,7 @@ jobs:
 
       - name: check flag
         run: |
-          echo ${{ needs.tf-flag.outputs.TF_STATE_FLAG }}
+          echo ${{ needs.terraform-Deploy.outputs.TF_STATE_FLAG }}
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
 
