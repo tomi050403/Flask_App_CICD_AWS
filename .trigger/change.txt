@@ -2,4 +2,4 @@ destory check
 check2
 exitcode check
 add tf-state-flag check 2 plus apply
-add tf-state-flag check 2 OK deploy
+add tf-state-flag check 2 OK destory

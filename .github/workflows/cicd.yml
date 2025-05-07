@@ -130,6 +130,11 @@ jobs:
           test -z "$(terraform state list 2>/dev/null)" && echo "TF_STATE_FLAG=0" >> $GITHUB_OUTPUT || echo "TF_STATE_FLAG=1" >> $GITHUB_OUTPUT
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
+      - name: check flag
+        run: |
+          echo ${{ needs.tf-flag.outputs.TF_STATE_FLAG }}
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
+
 
   Ansible-app-deploy:
     name: "Ansible-app-deploy"
