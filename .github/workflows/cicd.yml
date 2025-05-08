@@ -150,7 +150,7 @@ jobs:
     name: "Ansible-app-deploy"
     needs: Terraform-Deploy
     if: |
-      needs.terraform-Deploy.outputs.TF_STATE_FLAG == 1
+      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '1'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
