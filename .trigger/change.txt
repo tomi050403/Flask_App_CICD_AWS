@@ -9,3 +9,4 @@ terraform set up 2 check secret
 terraform apply
 terraform apply2
 terraform apply3
+terraform destroy
