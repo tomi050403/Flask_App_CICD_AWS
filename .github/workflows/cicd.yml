@@ -146,8 +146,8 @@ jobs:
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
 
-  Ansible-app-deploy:
-    name: "Ansible-app-deploy"
+  Ansible-App-Deploy:
+    name: "Ansible-App-Deploy"
     needs: Terraform-Deploy
     if: |
       needs.terraform-Deploy.outputs.TF_STATE_FLAG == '1'
