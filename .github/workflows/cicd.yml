@@ -25,6 +25,8 @@ env:
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
   TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
 
+  ANS_EXECUTE_PATH: 02_ansible/
+
 permissions:
   id-token: write
   contents: read
@@ -129,6 +131,9 @@ jobs:
           terraform destroy -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
+      # terraform state確認フラグ
+      # 0:リソースなし（後続のjob Ansible-App-Deployを実行しない）
+      # 1:リソースあり
       - name: terraform state check flag
         id: tf-flag
         run: |
@@ -147,7 +152,7 @@ jobs:
     name: "Ansible-App-Deploy"
     needs: Terraform-Deploy
     if: |
-      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '2'
+      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '1'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -159,18 +164,49 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
 
-      - name: setup value
+      - name: Get EC2 instance id
         run: |
           aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=flask-app-dev-appsv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
-            --output text \
-            > app-i.txt
+            --output text > app-i.txt
+
           aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=flask-app-dev-websv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
-            --output text \
-            > web-i.txt
+            --output text > web-i.txt
+        working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
+      - name: Instance id setup in Inventory
+        run: |
+          sed -i "s/APP-INSTANCE-NUMBER/$(cat app-i.txt)/" inventoryes/hosts.ini
+          sed -i "s/WEB-INSTANCE-NUMBER/$(cat web-i.txt)/" inventoryes/hosts.ini
+        working-directory: ${{ env.ANS_EXECUTE_PATH }}
+
+      - name: Set SSH Key
+        run: |
+          echo -e "${{ secrets.EC2_PRIVATE_KEY }}" > GHA-FLASK-APP.pem
+          chmod 600 GHA-FLASK-APP.pem
+        working-directory: ${{ env.ANS_EXECUTE_PATH }}
+
+      - name: Setup variablesFile
+        run: |
+          db_host=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_HOST)
+          db_username=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_USERNAME)
+          db_userpass=$( aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_USERPASS)
+          git_user="${{ secrets.SET_GITHUB_USER }}"
+          git_token="${{ secrets.SET_GITHUB_TOKEN }}"
+
+          sed -i "s/DB_HOST/${db_host}/" vars/sec.yml
+          sed -i "s/DB_USERNAME/${db_username}/" vars/sec.yml
+          sed -i "s/DB_USERPASS/${db_userpass}/" vars/sec.yml
+          sed -i "s/GITHUB_USER/${git_user}/" vars/sec.yml
+          sed -i "s/GITHUB_TOKEN/${git_token}/" vars/sec.yml
+        working-directory: ${{ env.ANS_EXECUTE_PATH }}
+
+      - name: Run Ansible-playbook
+        run: |
+          ansible-playbook -i inventoryes/hosts.ini setup.yml
+        working-directory: ${{ env.ANS_EXECUTE_PATH }}
