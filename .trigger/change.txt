@@ -6,4 +6,5 @@ add tf-state-flag check 2 OK destory
 check flag 3
 test setup end
 terraform set up 2 check secret
-terraform applys
+terraform apply
+terraform apply2
