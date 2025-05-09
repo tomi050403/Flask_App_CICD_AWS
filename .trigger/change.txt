@@ -12,3 +12,4 @@ terraform apply3
 terraform destroy
 terraform fmt check 2
 test terraform and ansible
+destroy
