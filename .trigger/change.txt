@@ -5,5 +5,4 @@ add tf-state-flag check 2 plus apply
 add tf-state-flag check 2 OK destory
 check flag 3
 test setup end
-terraform set up end
-terraform set up flask 4
+terraform set up
