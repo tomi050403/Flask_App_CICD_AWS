@@ -61,7 +61,7 @@ resource "aws_db_instance" "rds_instance" {
   publicly_accessible    = false
   port                   = 3306
 
-  db_name              = var.rds_db_name
+  name                 = var.rds_db_name
   parameter_group_name = aws_db_parameter_group.rds_parametergp.name
   option_group_name    = aws_db_option_group.rds_optiongp.name
 

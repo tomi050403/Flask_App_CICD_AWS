@@ -10,4 +10,4 @@ terraform apply
 terraform apply2
 terraform apply3
 terraform destroy
-terraform fmt check
+terraform fmt check 2
