@@ -111,24 +111,9 @@ jobs:
             -backend-config="region="ap-northeast-1""
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-      # 正式時は削除
       - name: terraform apply
-        if: contains(github.event.head_commit.message, '[apply]')
         run: |
           terraform apply -auto-approve
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
-
-      # 正式用
-      # - name: terraform apply
-      #   run: |
-      #     terraform apply -auto-approve
-      #   working-directory: ${{ env.TF_EXECUTE_PATH }}
-
-      # 正式時は削除
-      - name: terraform destroy
-        if: contains(github.event.head_commit.message, '[destroy]')
-        run: |
-          terraform destroy -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
       # terraform state確認フラグ
@@ -139,14 +124,6 @@ jobs:
         run: |
           test -z "$(terraform state list 2>/dev/null)" && echo "TF_STATE_FLAG=0" >> $GITHUB_OUTPUT || echo "TF_STATE_FLAG=1" >> $GITHUB_OUTPUT
         working-directory: ${{ env.TF_EXECUTE_PATH }}
-
-      # flagチェック用
-      # 正式時は削除
-      - name: check flag
-        run: |
-          echo ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
-
 
   Ansible-App-Deploy:
     name: "Ansible-App-Deploy"

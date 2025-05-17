@@ -44,7 +44,7 @@
 
 ## 注意事項
 
-- 本リポジトリは**CICD専用**です（インフラ構築ソースは含みません）
+- 本リポジトリは**CICD専用**です
 - インフラ構成は別途（[AWS_Portfolio](https://github.com/tomi050403/AWS_Portfolio)）を参照してください
 - Flaskアプリのソースコードも別リポジトリ（[flask-app](https://github.com/tomi050403/flask-app)）にあります
 
