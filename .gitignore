@@ -43,3 +43,4 @@ terraform.rc
 01_terraform/flask-app/src/*
 
 .github/workflows/preparation.txt
+ansible.cfg

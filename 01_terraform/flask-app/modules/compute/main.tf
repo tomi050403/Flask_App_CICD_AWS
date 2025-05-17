@@ -1,18 +1,4 @@
 # ---
-# Key Pair
-# ---
-# resource "aws_key_pair" "keypair" {
-#   key_name   = "${var.project}-${var.environment}-keypair"
-#   public_key = file("../../src/flask-app-project.pub")
-
-#   tags = {
-#     Name    = "${var.project}-${var.environment}-keypair"
-#     Project = var.project
-#     Env     = var.environment
-#   }
-# }
-
-# ---
 # EC2 instance
 # ---
 # app sv
