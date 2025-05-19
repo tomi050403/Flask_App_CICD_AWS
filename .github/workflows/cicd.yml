@@ -84,7 +84,7 @@ jobs:
     name: "Terraform-Deploy"
     needs: Terraform-Preview
     if: |
-      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
+      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
     outputs: 
       TF_STATE_FLAG: ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
     runs-on: ubuntu-latest
