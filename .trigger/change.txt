@@ -11,3 +11,4 @@ serverspec/rubytest add RDS-ENDPOINT test2
 serverspec/rubytest add RDS-ENDPOINT test3
 serverspec/rubytest add RDS-ENDPOINT test4
 serverspec/rubytest add RDS-ENDPOINT test5
+serverspec/rubytest add RDS-ENDPOINT test6
