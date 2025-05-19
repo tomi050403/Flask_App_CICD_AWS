@@ -5,3 +5,4 @@ cicd/flagtest,serverspec/rubytest
 serverspec/rubytest add Gemfile
 serverspec/rubytest add specdir,spec_helper.rb,Rakefile
 serverspec/rubytest Error Correction
+serverspec/rubytest add .rspec(--format documentation)
