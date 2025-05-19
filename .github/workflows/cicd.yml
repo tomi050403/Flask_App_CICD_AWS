@@ -220,6 +220,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Get EC2 instance id
+        run: |
+          aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=flask-app-dev-appsv" \
+            "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output text > app-i.txt
+
+          aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=flask-app-dev-websv" \
+            "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output text > web-i.txt
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+
+      - name: Instance id setup in helper.rb
+        run: |
+          sed -i "s/APP-INSTANCE-NUMBER/$(cat app-i.txt)/" spec/spec_helper.rb
+          sed -i "s/WEB-INSTANCE-NUMBER/$(cat web-i.txt)/" spec/spec_helper.rb
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+
+      - name: Set SSH Key
+        run: |
+          echo -e "${{ secrets.EC2_PRIVATE_KEY }}" > GHA-FLASK-APP.pem
+          chmod 400 GHA-FLASK-APP.pem
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+
       - name: ruby setup
         uses: ruby/setup-ruby@v1
         with:
@@ -229,4 +262,9 @@ jobs:
         run: |
           gem install bundler
           bundle install
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+
+      - name: run server spec
+        run: |
+          bundle exec rake spec
         working-directory: ${{ env.SPEC_EXECUTE_PATH }}
