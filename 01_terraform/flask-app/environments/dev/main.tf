@@ -36,7 +36,6 @@ variable "region" {
 # Network
 # ---
 module "network" {
-module "network" {
   source = "../../modules/network"
 
   project     = var.project
