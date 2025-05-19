@@ -22,3 +22,4 @@ serverspec/rubytest add RDS-ENDPOINT test13
 serverspec/rubytest add RDS-ENDPOINT name check
 jobs/run environments test
 jobs/run environments test2
+cicd serverspec deploy
