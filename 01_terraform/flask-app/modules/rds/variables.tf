@@ -35,11 +35,11 @@ variable "rds_db_name" {
 
 ########################################################
 ### import
-variable "private_subnet_1a" {
+variable "private_subnet_1a_rds" {
   type = string
 }
 
-variable "private_subnet_1c" {
+variable "private_subnet_1c_rds" {
   type = string
 }
 
