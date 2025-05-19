@@ -256,7 +256,7 @@ jobs:
 
       - name: Set RDS endpoint
         run: |
-          sed -i "s/RDS-ENDPOINT/${RDS-ENDPOINT}/" spec/app-sv/sample_spec.rb
+          sed -i "s/RDS-ENDPOINT/${RDS-ENDPOINT}/" spec/app-sv/app_spec.rb
         working-directory: ${{ env.SPEC_EXECUTE_PATH }}
 
       - name: Set SSH Key
