@@ -20,3 +20,4 @@ serverspec/rubytest add RDS-ENDPOINT test11
 serverspec/rubytest add RDS-ENDPOINT test12
 serverspec/rubytest add RDS-ENDPOINT test13
 serverspec/rubytest add RDS-ENDPOINT name check
+jobs/run environments test

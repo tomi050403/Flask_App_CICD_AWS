@@ -216,6 +216,7 @@ jobs:
     # needs: Ansible-App-Deploy
     needs: Terraform-Deploy
     runs-on: ubuntu-latest
+    environments: deploy-check
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
