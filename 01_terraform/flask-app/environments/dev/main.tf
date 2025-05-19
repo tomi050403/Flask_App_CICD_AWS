@@ -36,19 +36,24 @@ variable "region" {
 # Network
 # ---
 module "network" {
+module "network" {
   source = "../../modules/network"
 
   project     = var.project
   environment = var.environment
   region      = var.region
 
-  vpc_cidr_block  = var.vpc_cidr_block
-  AZ_1            = var.AZ_1
-  AZ_1_publicsub  = var.AZ_1_publicsub
-  AZ_1_privatesub = var.AZ_1_privatesub
-  AZ_2            = var.AZ_2
-  AZ_2_publicsub  = var.AZ_2_publicsub
-  AZ_2_privatesub = var.AZ_2_privatesub
+  vpc_cidr_block      = var.vpc_cidr_block
+  AZ_1                = var.AZ_1
+  AZ_1_publicsub      = var.AZ_1_publicsub
+  AZ_1_privatesub_web = var.AZ_1_privatesub_web
+  AZ_1_privatesub_app = var.AZ_1_privatesub_app
+  AZ_1_privatesub_rds = var.AZ_1_privatesub_rds
+  AZ_2                = var.AZ_2
+  AZ_2_publicsub      = var.AZ_2_publicsub
+  AZ_2_privatesub_web = var.AZ_2_privatesub_web
+  AZ_2_privatesub_app = var.AZ_2_privatesub_app
+  AZ_2_privatesub_rds = var.AZ_2_privatesub_rds
 }
 
 # ---
@@ -61,14 +66,12 @@ module "alb" {
   environment = var.environment
   region      = var.region
 
-  web_sg_id         = module.security.web_sg_id
-  alb_sg_id         = module.security.alb_sg_id
-  vpc_id            = module.network.vpc_id
-  public_subnet_1a  = module.network.public_subnet_1a
-  public_subnet_1c  = module.network.public_subnet_1c
-  private_subnet_1a = module.network.private_subnet_1a
-  private_subnet_1c = module.network.private_subnet_1c
-  web_server_id     = module.compute.web_server_id
+  web_sg_id        = module.security.web_sg_id
+  alb_sg_id        = module.security.alb_sg_id
+  vpc_id           = module.network.vpc_id
+  public_subnet_1a = module.network.public_subnet_1a
+  public_subnet_1c = module.network.public_subnet_1c
+  web_server_id    = module.compute.web_server_id
 }
 
 # ---
@@ -101,11 +104,11 @@ module "compute" {
   websv_instance_type = var.websv_instance_type
   web_sv_ami          = var.web_sv_ami
 
-  public_subnet_1a  = module.network.public_subnet_1a
-  private_subnet_1a = module.network.private_subnet_1a
-  app_sg_id         = module.security.app_sg_id
-  web_sg_id         = module.security.web_sg_id
-  ec2_profile_name  = module.iam.ec2_profile_name
+  private_subnet_1a_web = module.network.private_subnet_1a_web
+  private_subnet_1a_app = module.network.private_subnet_1a_app
+  app_sg_id          = module.security.app_sg_id
+  web_sg_id          = module.security.web_sg_id
+  ec2_profile_name   = module.iam.ec2_profile_name
 }
 
 # ---
@@ -123,9 +126,9 @@ module "rds" {
   rds_az_none_multiaz = var.rds_az_none_multiaz
   rds_db_name         = var.rds_db_name
 
-  private_subnet_1a = module.network.private_subnet_1a
-  private_subnet_1c = module.network.private_subnet_1c
-  rds_sg_id         = module.security.rds_sg_id
+  private_subnet_1a_rds = module.network.private_subnet_1a_rds
+  private_subnet_1c_rds = module.network.private_subnet_1c_rds
+  rds_sg_id             = module.security.rds_sg_id
 }
 
 

@@ -1,2 +1,3 @@
 # serverspec
 first push + terraform review
+terraform review retry
