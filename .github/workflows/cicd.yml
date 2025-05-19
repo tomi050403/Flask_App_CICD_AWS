@@ -132,7 +132,7 @@ jobs:
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
       # terraform state確認フラグ
-      # リソースが想定の数構築されているか確認（後続のjob Ansible-App-Deployを実行しない）
+      # リソースが想定の数構築されているか確認（job Ansible-App-Deployの実行確認）
       - name: terraform state check flag
         id: tf-flag
         run: |
@@ -152,6 +152,7 @@ jobs:
     needs: Terraform-Deploy
     if: |
       needs.terraform-Deploy.outputs.TF_STATE_FLAG == '1000'
+#      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '56'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

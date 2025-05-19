@@ -2,3 +2,4 @@
 first push + terraform review
 terraform review retry 4
 cicd/flagtest,serverspec/rubytest
+serverspec/rubytest add Gemfile
