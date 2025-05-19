@@ -48,6 +48,6 @@ describe port(8000) do
 end
 
 describe command('hostname -I') do
-  its(:stdout) { should match /10\.10\.11\./ }
+  its(:stdout) { should match /10\.10\.12\./ }
 end
 

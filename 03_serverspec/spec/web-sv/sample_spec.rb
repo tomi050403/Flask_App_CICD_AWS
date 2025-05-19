@@ -27,6 +27,6 @@ describe command('curl http://app.dev.instance.privatelocal:8000 -o /dev/null -w
 end
 
 describe command('hostname -I') do
-  its(:stdout) { should match /10\.10\.12\./ }
+  its(:stdout) { should match /10\.10\.11\./ }
 end
 
