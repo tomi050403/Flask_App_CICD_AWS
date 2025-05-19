@@ -84,7 +84,7 @@ jobs:
     name: "Terraform-Deploy"
     needs: Terraform-Preview
     if: |
-      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
+      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
     outputs: 
       TF_STATE_FLAG: ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
     runs-on: ubuntu-latest
@@ -130,7 +130,7 @@ jobs:
     name: "Ansible-App-Deploy"
     needs: Terraform-Deploy
     if: |
-      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '56'
+      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '100'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

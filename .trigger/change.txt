@@ -1,4 +1,4 @@
-serverspec final check
+flag check
 
 # serverspec
 
