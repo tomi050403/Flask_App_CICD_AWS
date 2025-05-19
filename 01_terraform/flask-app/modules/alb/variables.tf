@@ -34,14 +34,6 @@ variable "public_subnet_1c" {
   type = string
 }
 
-variable "private_subnet_1a" {
-  type = string
-}
-
-variable "private_subnet_1c" {
-  type = string
-}
-
 variable "web_server_id" {
   type = string
 }

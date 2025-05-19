@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/ansible
+      - feature/serverspec
     paths:
       - .github/workflows/**
       - .trigger/change.txt

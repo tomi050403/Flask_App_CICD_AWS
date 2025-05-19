@@ -32,11 +32,12 @@ variable "web_sv_ami" {
 
 ########################################################
 ### import
-variable "public_subnet_1a" {
+
+variable "private_subnet_1a_web" {
   type = string
 }
 
-variable "private_subnet_1a" {
+variable "private_subnet_1a_app" {
   type = string
 }
 

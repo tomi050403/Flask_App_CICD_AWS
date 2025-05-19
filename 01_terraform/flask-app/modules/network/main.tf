@@ -48,28 +48,84 @@ resource "aws_subnet" "public_subnet_1c" {
 }
 
 #Private
-resource "aws_subnet" "private_subnet_1a" {
+resource "aws_subnet" "private_subnet_1a_web" {
   vpc_id                  = aws_vpc.vpc.id
   availability_zone       = var.AZ_1
-  cidr_block              = var.AZ_1_privatesub
+  cidr_block              = var.AZ_1_privatesub_web
   map_public_ip_on_launch = false
 
   tags = {
-    Name    = "${var.project}-${var.environment}-private-subnet-1a"
+    Name    = "${var.project}-${var.environment}-private-subnet-1a_web"
     Project = var.project
     Env     = var.environment
     Type    = "private"
   }
 }
 
-resource "aws_subnet" "private_subnet_1c" {
+resource "aws_subnet" "private_subnet_1a_app" {
   vpc_id                  = aws_vpc.vpc.id
-  availability_zone       = var.AZ_2
-  cidr_block              = var.AZ_2_privatesub
+  availability_zone       = var.AZ_1
+  cidr_block              = var.AZ_1_privatesub_app
   map_public_ip_on_launch = false
 
   tags = {
-    Name    = "${var.project}-${var.environment}-private-subnet-1c"
+    Name    = "${var.project}-${var.environment}-private-subnet-1a_app"
+    Project = var.project
+    Env     = var.environment
+    Type    = "private"
+  }
+}
+
+resource "aws_subnet" "private_subnet_1a_rds" {
+  vpc_id                  = aws_vpc.vpc.id
+  availability_zone       = var.AZ_1
+  cidr_block              = var.AZ_1_privatesub_rds
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-subnet-1a_rds"
+    Project = var.project
+    Env     = var.environment
+    Type    = "private"
+  }
+}
+
+resource "aws_subnet" "private_subnet_1c_web" {
+  vpc_id                  = aws_vpc.vpc.id
+  availability_zone       = var.AZ_2
+  cidr_block              = var.AZ_2_privatesub_web
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-subnet-1c_web"
+    Project = var.project
+    Env     = var.environment
+    Type    = "private"
+  }
+}
+
+resource "aws_subnet" "private_subnet_1c_app" {
+  vpc_id                  = aws_vpc.vpc.id
+  availability_zone       = var.AZ_2
+  cidr_block              = var.AZ_2_privatesub_app
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-subnet-1c_app"
+    Project = var.project
+    Env     = var.environment
+    Type    = "private"
+  }
+}
+
+resource "aws_subnet" "private_subnet_1c_rds" {
+  vpc_id                  = aws_vpc.vpc.id
+  availability_zone       = var.AZ_2
+  cidr_block              = var.AZ_2_privatesub_rds
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-subnet-1c_rds"
     Project = var.project
     Env     = var.environment
     Type    = "private"
@@ -91,36 +147,58 @@ resource "aws_route_table" "public_route_table" {
   }
 }
 
-resource "aws_route_table_association" "public_route_asso_1a" {
+resource "aws_route_table_association" "public_route_asso" {
+  for_each = {
+    "1a" = aws_subnet.public_subnet_1a.id,
+    "1c" = aws_subnet.public_subnet_1c.id
+  }
+  subnet_id      = each.value
   route_table_id = aws_route_table.public_route_table.id
-  subnet_id      = aws_subnet.public_subnet_1a.id
-}
-
-resource "aws_route_table_association" "public_route_asso_1c" {
-  route_table_id = aws_route_table.public_route_table.id
-  subnet_id      = aws_subnet.public_subnet_1c.id
 }
 
 # Private
-resource "aws_route_table" "private_route_table" {
+# Private_1 web app
+resource "aws_route_table" "private_route_table_1" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name    = "${var.project}-${var.environment}-private-route-table"
+    Name    = "${var.project}-${var.environment}-private-route-table_1"
     Project = var.project
     Env     = var.environment
     Type    = "private"
   }
 }
 
-resource "aws_route_table_association" "private_route_asso_1a" {
-  route_table_id = aws_route_table.private_route_table.id
-  subnet_id      = aws_subnet.private_subnet_1a.id
+resource "aws_route_table_association" "private_route_asso_1" {
+  for_each = {
+    "1a_web" = aws_subnet.private_subnet_1a_web.id,
+    "1a_app" = aws_subnet.private_subnet_1a_app.id,
+    "1c_web" = aws_subnet.private_subnet_1c_web.id,
+    "1c_app" = aws_subnet.private_subnet_1c_app.id
+  }
+  subnet_id      = each.value
+  route_table_id = aws_route_table.private_route_table_1.id
 }
 
-resource "aws_route_table_association" "private_route_asso_1c" {
-  route_table_id = aws_route_table.private_route_table.id
-  subnet_id      = aws_subnet.private_subnet_1c.id
+# Private_2 rds
+resource "aws_route_table" "private_route_table_2" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-private-route-table_2"
+    Project = var.project
+    Env     = var.environment
+    Type    = "private"
+  }
+}
+
+resource "aws_route_table_association" "private_route_asso_2" {
+  for_each = {
+    "1a_rds" = aws_subnet.private_subnet_1a_rds.id,
+    "1c_rds" = aws_subnet.private_subnet_1c_rds.id
+  }
+  subnet_id      = each.value
+  route_table_id = aws_route_table.private_route_table_2.id
 }
 
 # ---
@@ -167,7 +245,7 @@ resource "aws_nat_gateway" "nat_gw" {
 }
 
 resource "aws_route" "nat_route_private" {
-  route_table_id         = aws_route_table.private_route_table.id
+  route_table_id         = aws_route_table.private_route_table_1.id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat_gw.id
 }
@@ -188,10 +266,26 @@ output "public_subnet_1c" {
   value = aws_subnet.public_subnet_1c.id
 }
 
-output "private_subnet_1a" {
-  value = aws_subnet.private_subnet_1a.id
+output "private_subnet_1a_web" {
+  value = aws_subnet.private_subnet_1a_web.id
 }
 
-output "private_subnet_1c" {
-  value = aws_subnet.private_subnet_1c.id
+output "private_subnet_1a_app" {
+  value = aws_subnet.private_subnet_1a_app.id
+}
+
+output "private_subnet_1a_rds" {
+  value = aws_subnet.private_subnet_1a_rds.id
+}
+
+output "private_subnet_1c_web" {
+  value = aws_subnet.private_subnet_1c_web.id
+}
+
+output "private_subnet_1c_app" {
+  value = aws_subnet.private_subnet_1c_app.id
+}
+
+output "private_subnet_1c_rds" {
+  value = aws_subnet.private_subnet_1c_rds.id
 }

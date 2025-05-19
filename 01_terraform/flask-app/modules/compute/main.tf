@@ -5,7 +5,7 @@
 resource "aws_instance" "appsv" {
   ami                         = var.app_sv_ami
   instance_type               = var.appsv_instance_type
-  subnet_id                   = var.private_subnet_1a
+  subnet_id                   = var.private_subnet_1a_app
   associate_public_ip_address = false
   vpc_security_group_ids      = [var.app_sg_id]
   iam_instance_profile        = var.ec2_profile_name
@@ -24,8 +24,8 @@ resource "aws_instance" "appsv" {
 resource "aws_instance" "websv" {
   ami                         = var.web_sv_ami
   instance_type               = var.websv_instance_type
-  subnet_id                   = var.public_subnet_1a
-  associate_public_ip_address = true
+  subnet_id                   = var.private_subnet_1a_web
+  associate_public_ip_address = false
   vpc_security_group_ids      = [var.web_sg_id]
   iam_instance_profile        = var.ec2_profile_name
 
