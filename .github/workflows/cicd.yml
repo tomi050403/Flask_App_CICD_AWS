@@ -249,9 +249,13 @@ jobs:
 
       - name: Get RDS endpoint name
         run: |
+          set +e
           db_host=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_HOST)
           echo "RDS-ENDPOINT=$db_host" >> $GITHUB_ENV
         working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+
+      - name: Debug RDS env var
+        run: echo $RDS_ENDPOINT
 
       - name: Set SSH Key
         run: |
