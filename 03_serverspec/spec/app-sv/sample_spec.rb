@@ -51,3 +51,6 @@ describe command('hostname -I') do
   its(:stdout) { should match /10\.10\.12\./ }
 end
 
+describe command('dig +short RDS-ENDPOINT') do
+  its(:stdout) { should match /10\.(10|20)\./ }
+end

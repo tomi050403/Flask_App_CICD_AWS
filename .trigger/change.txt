@@ -6,3 +6,4 @@ serverspec/rubytest add Gemfile
 serverspec/rubytest add specdir,spec_helper.rb,Rakefile
 serverspec/rubytest Error Correction
 serverspec/rubytest add .rspec(--format documentation)
+terraform/env review and serverspec/rubytest add RDS-ENDPOINT test
