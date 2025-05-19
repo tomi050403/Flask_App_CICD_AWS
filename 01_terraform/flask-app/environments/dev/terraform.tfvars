@@ -17,10 +17,10 @@ AZ_2_privatesub_app = "10.10.22.0/24"   # AZ2のプライベートサブネッ�
 AZ_2_privatesub_rds = "10.10.23.0/24"   # AZ2のプライベートサブネット1_rds
 
 ### compute settings
-appsv_instance_type = "t2.micro"                # Appサーバのインスタンスタイプ
-app_sv_ami          = "ami-0b28346b270c7b165"   # Appサーバ用AMI(2025年構築時点)
-websv_instance_type = "t2.micro"                # Webサーバのインスタンスタイプ
-web_sv_ami          = "ami-0b28346b270c7b165"   # Webサーバ用AMI(2025年構築時点)
+appsv_instance_type = "t2.micro"              # Appサーバのインスタンスタイプ
+app_sv_ami          = "ami-0b28346b270c7b165" # Appサーバ用AMI(2025年構築時点)
+websv_instance_type = "t2.micro"              # Webサーバのインスタンスタイプ
+web_sv_ami          = "ami-0b28346b270c7b165" # Webサーバ用AMI(2025年構築時点)
 
 ### rds settings
 rds_instance_class  = "db.t3.micro"     # RDSインスタンスタイプ
@@ -28,4 +28,4 @@ rds_az_none_multiaz = "ap-northeast-1a" # RDSの配置AZ（RDSにて非Multi-AZ�
 rds_db_name         = "flask_app"       # データベース名
 
 ### route53 settings
-private_host_zone = "instance.privatelocal"   # プライベートホストゾーン名
+private_host_zone = "instance.privatelocal" # プライベートホストゾーン名

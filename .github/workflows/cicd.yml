@@ -27,6 +27,9 @@ env:
 
   ANS_EXECUTE_PATH: 02_ansible/
 
+  SPEC_EXECUTE_PATH: 03_serverspec/
+  SPEC_RUBY_VERSION: 3.2.2
+
 permissions:
   id-token: write
   contents: read
@@ -111,25 +114,44 @@ jobs:
             -backend-config="region="ap-northeast-1""
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
+      # - name: terraform apply
+      #   run: |
+      #     terraform apply -auto-approve
+      #   working-directory: ${{ env.TF_EXECUTE_PATH }}
+
       - name: terraform apply
+        if: contains(github.event.head_commit.message, '[apply]')
         run: |
           terraform apply -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
+      - name: terraform destroy
+        if: contains(github.event.head_commit.message, '[destroy]')
+        run: |
+          terraform destroy -auto-approve
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
+
       # terraform state確認フラグ
-      # 0:リソースなし（後続のjob Ansible-App-Deployを実行しない）
-      # 1:リソースあり
+      # リソースが想定の数構築されているか確認（後続のjob Ansible-App-Deployを実行しない）
       - name: terraform state check flag
         id: tf-flag
         run: |
-          test -z "$(terraform state list 2>/dev/null)" && echo "TF_STATE_FLAG=0" >> $GITHUB_OUTPUT || echo "TF_STATE_FLAG=1" >> $GITHUB_OUTPUT
+          set +e
+          SET_TF_COUNT=$(terraform state list | grep .aws_ | wc -l)
+          echo "TF_STATE_FLAG=$SET_TF_COUNT" >> $GITHUB_OUTPUT
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
+
+      # flagチェック
+      - name: check flag
+        run: |
+          echo ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
   Ansible-App-Deploy:
     name: "Ansible-App-Deploy"
     needs: Terraform-Deploy
     if: |
-      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '1'
+      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '1000'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -187,3 +209,23 @@ jobs:
         run: |
           ansible-playbook -i inventoryes/hosts.ini setup.yml
         working-directory: ${{ env.ANS_EXECUTE_PATH }}
+
+  ServerSpec-Check:
+    name: "ServerSpec-Check"
+    # needs: Ansible-App-Deploy
+    needs: Terraform-Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ruby setup
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.SPEC_RUBY_VERSION }}
+
+      - name: ruby config
+        run: |
+          gem install bundler
+          bundle install
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}

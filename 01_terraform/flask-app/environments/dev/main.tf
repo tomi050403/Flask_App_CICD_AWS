@@ -105,9 +105,9 @@ module "compute" {
 
   private_subnet_1a_web = module.network.private_subnet_1a_web
   private_subnet_1a_app = module.network.private_subnet_1a_app
-  app_sg_id          = module.security.app_sg_id
-  web_sg_id          = module.security.web_sg_id
-  ec2_profile_name   = module.iam.ec2_profile_name
+  app_sg_id             = module.security.app_sg_id
+  web_sg_id             = module.security.web_sg_id
+  ec2_profile_name      = module.iam.ec2_profile_name
 }
 
 # ---

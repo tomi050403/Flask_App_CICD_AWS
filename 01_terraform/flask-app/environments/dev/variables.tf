@@ -73,7 +73,7 @@ variable "web_sv_ami" {
 ########################################################
 ### rds
 variable "rds_username" {
-  type = string
+  type      = string
   sensitive = true
 }
 
@@ -86,7 +86,7 @@ variable "rds_az_none_multiaz" {
 }
 
 variable "rds_db_name" {
-  type = string
+  type      = string
   sensitive = true
 }
 
