@@ -254,9 +254,6 @@ jobs:
           echo "RDS-ENDPOINT=$db_host" >> $GITHUB_ENV
         working-directory: ${{ env.SPEC_EXECUTE_PATH }}
 
-      - name: Debug RDS env var
-        run: echo $RDS_ENDPOINT
-
       - name: Set SSH Key
         run: |
           echo -e "${{ secrets.EC2_PRIVATE_KEY }}" > GHA-FLASK-APP.pem
