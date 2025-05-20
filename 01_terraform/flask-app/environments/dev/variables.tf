@@ -12,7 +12,15 @@ variable "AZ_1_publicsub" {
   type = string
 }
 
-variable "AZ_1_privatesub" {
+variable "AZ_1_privatesub_web" {
+  type = string
+}
+
+variable "AZ_1_privatesub_app" {
+  type = string
+}
+
+variable "AZ_1_privatesub_rds" {
   type = string
 }
 
@@ -24,7 +32,15 @@ variable "AZ_2_publicsub" {
   type = string
 }
 
-variable "AZ_2_privatesub" {
+variable "AZ_2_privatesub_web" {
+  type = string
+}
+
+variable "AZ_2_privatesub_app" {
+  type = string
+}
+
+variable "AZ_2_privatesub_rds" {
   type = string
 }
 
@@ -57,7 +73,7 @@ variable "web_sv_ami" {
 ########################################################
 ### rds
 variable "rds_username" {
-  type = string
+  type      = string
   sensitive = true
 }
 
@@ -70,7 +86,7 @@ variable "rds_az_none_multiaz" {
 }
 
 variable "rds_db_name" {
-  type = string
+  type      = string
   sensitive = true
 }
 

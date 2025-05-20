@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-      - feature/ansible
+      - feature/serverspec
     paths:
-      - .github/workflows/**
       - .trigger/change.txt
   workflow_dispatch:
 
@@ -19,13 +18,16 @@ env:
   TF_VERSION: 1.11.2
   TF_EXECUTE_PATH: 01_terraform/flask-app/environments/dev/
 
-  TF_VAR_project: ${{ vars.PRJ_01_PROJECT }}
-  TF_VAR_environment: ${{ vars.PRJ_02_ENVIRONMENT }}
-  TF_VAR_region: ${{ vars.PRJ_03_REGION }}
+  TF_VAR_project: flask-app
+  TF_VAR_environment: dev
+  TF_VAR_region: ap-northeast-1
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
   TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
 
   ANS_EXECUTE_PATH: 02_ansible/
+
+  SPEC_EXECUTE_PATH: 03_serverspec/
+  SPEC_RUBY_VERSION: 3.2.2
 
 permissions:
   id-token: write
@@ -82,8 +84,7 @@ jobs:
     name: "Terraform-Deploy"
     needs: Terraform-Preview
     if: |
-      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2' ||
-      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
+      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
     outputs: 
       TF_STATE_FLAG: ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
     runs-on: ubuntu-latest
@@ -112,24 +113,24 @@ jobs:
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
       - name: terraform apply
+        if: contains(github.event.head_commit.message, '[apply]')
         run: |
           terraform apply -auto-approve
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
-      # terraform state確認フラグ
-      # 0:リソースなし（後続のjob Ansible-App-Deployを実行しない）
-      # 1:リソースあり
       - name: terraform state check flag
         id: tf-flag
         run: |
-          test -z "$(terraform state list 2>/dev/null)" && echo "TF_STATE_FLAG=0" >> $GITHUB_OUTPUT || echo "TF_STATE_FLAG=1" >> $GITHUB_OUTPUT
+          set +e
+          SET_TF_COUNT=$(terraform state list | grep .aws_ | wc -l)
+          echo "TF_STATE_FLAG=$SET_TF_COUNT" >> $GITHUB_OUTPUT
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
   Ansible-App-Deploy:
     name: "Ansible-App-Deploy"
     needs: Terraform-Deploy
     if: |
-      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '1'
+      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '56'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -187,3 +188,72 @@ jobs:
         run: |
           ansible-playbook -i inventoryes/hosts.ini setup.yml
         working-directory: ${{ env.ANS_EXECUTE_PATH }}
+
+  ServerSpec-Check:
+    name: "ServerSpec-Check"
+    needs: Ansible-App-Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Get EC2 instance id
+        run: |
+          aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=flask-app-dev-appsv" \
+            "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output text > app-i.txt
+
+          aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=flask-app-dev-websv" \
+            "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output text > web-i.txt
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+
+      - name: Instance id setup in helper.rb
+        run: |
+          sed -i "s/APP-INSTANCE-NUMBER/$(cat app-i.txt)/" spec/spec_helper.rb
+          sed -i "s/WEB-INSTANCE-NUMBER/$(cat web-i.txt)/" spec/spec_helper.rb
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+
+      - name: RDS endpoint name
+        run: |
+          set +e
+          db_host=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_HOST)
+          echo "RDS_ENDPOINT=$db_host" >> $GITHUB_ENV
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+      
+      - name: Mask RDS Endpoint
+        run: |
+          echo "::add-mask::$RDS_ENDPOINT"
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+ 
+      - name: Set SSH Key
+        run: |
+          echo -e "${{ secrets.EC2_PRIVATE_KEY }}" > GHA-FLASK-APP.pem
+          chmod 400 GHA-FLASK-APP.pem
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+
+      - name: ruby setup
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.SPEC_RUBY_VERSION }}
+
+      - name: ruby config
+        run: |
+          gem install bundler
+          bundle install
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+
+      - name: run server spec
+        run: |
+          bundle exec rake spec
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }}

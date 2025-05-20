@@ -30,8 +30,8 @@ resource "aws_db_option_group" "rds_optiongp" {
 resource "aws_db_subnet_group" "rds_subnetgp" {
   name = "${var.project}-${var.environment}-rds-subnetgp"
   subnet_ids = [
-    var.private_subnet_1a,
-    var.private_subnet_1c
+    var.private_subnet_1a_rds,
+    var.private_subnet_1c_rds
   ]
 
   tags = {

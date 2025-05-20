@@ -25,7 +25,15 @@ variable "AZ_1_publicsub" {
   type = string
 }
 
-variable "AZ_1_privatesub" {
+variable "AZ_1_privatesub_web" {
+  type = string
+}
+
+variable "AZ_1_privatesub_app" {
+  type = string
+}
+
+variable "AZ_1_privatesub_rds" {
   type = string
 }
 
@@ -37,6 +45,14 @@ variable "AZ_2_publicsub" {
   type = string
 }
 
-variable "AZ_2_privatesub" {
+variable "AZ_2_privatesub_web" {
+  type = string
+}
+
+variable "AZ_2_privatesub_app" {
+  type = string
+}
+
+variable "AZ_2_privatesub_rds" {
   type = string
 }

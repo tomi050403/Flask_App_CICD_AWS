@@ -1,15 +1,28 @@
-destory check
-check2
-exitcode check
-add tf-state-flag check 2 plus apply
-add tf-state-flag check 2 OK destory
-check flag 3
-test setup end
-terraform set up 2 check secret
-terraform apply
-terraform apply2
-terraform apply3
-terraform destroy
-terraform fmt check 2
-test terraform and ansible
-destroy
+spec final check retry 2
+
+# serverspec
+
+first push + terraform review
+terraform review retry 4
+cicd/flagtest,serverspec/rubytest
+serverspec/rubytest add Gemfile
+serverspec/rubytest add specdir,spec_helper.rb,Rakefile
+serverspec/rubytest Error Correction
+serverspec/rubytest add .rspec(--format documentation)
+terraform/env review2  and serverspec/rubytest add RDS-ENDPOINT test
+serverspec/rubytest add RDS-ENDPOINT test2
+serverspec/rubytest add RDS-ENDPOINT test3
+serverspec/rubytest add RDS-ENDPOINT test4
+serverspec/rubytest add RDS-ENDPOINT test5
+serverspec/rubytest add RDS-ENDPOINT test6
+serverspec/rubytest add RDS-ENDPOINT test7
+serverspec/rubytest add RDS-ENDPOINT test8
+serverspec/rubytest add RDS-ENDPOINT test9
+serverspec/rubytest add RDS-ENDPOINT test10
+serverspec/rubytest add RDS-ENDPOINT test11
+serverspec/rubytest add RDS-ENDPOINT test12
+serverspec/rubytest add RDS-ENDPOINT test13
+serverspec/rubytest add RDS-ENDPOINT name check
+jobs/run environments test
+jobs/run environments test2
+cicd serverspec deploy
