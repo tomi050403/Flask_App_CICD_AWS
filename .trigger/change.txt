@@ -1,4 +1,4 @@
-spec final check
+spec final check retry
 
 # serverspec
 
