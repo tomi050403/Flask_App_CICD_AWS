@@ -1,3 +1,4 @@
 # edit/readme
 
 readmecheck,ログ出力チェック
+ログ出力チェック2
