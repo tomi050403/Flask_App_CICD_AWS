@@ -52,7 +52,7 @@ describe command('hostname -I') do
 end
 
 describe 'RDS endpoint segment check' do
-  describe command("dig +short #{ENV['RDS_ENDPOINT']}") do
+  describe command("dig +short RDS_ENDPOINT") do
     its(:stdout) { should match /10\.(10|20)\./ }
   end
 end
