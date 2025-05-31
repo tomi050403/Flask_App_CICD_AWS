@@ -61,7 +61,7 @@ jobs:
           terraform init \
             -backend-config="bucket=${{ secrets.BED_01_BACKEND_BUCKET }}" \
             -backend-config="key=${{ secrets.BED_02_BACKEND_KEY }}" \
-            -backend-config="region="ap-northeast-1""
+            -backend-config="region=ap-northeast-1"
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
       - name: terraform validate
