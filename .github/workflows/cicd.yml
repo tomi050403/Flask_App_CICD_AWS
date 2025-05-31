@@ -85,8 +85,8 @@ jobs:
     name: "Terraform-Deploy"
     needs: Terraform-Preview
     if: |
-#      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
       needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
+#      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
     outputs: 
       TF_STATE_FLAG: ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
       TF_ENVIRONMENT_FLAG: ${{ steps.tf-ENVIRONMENT.outputs.TF_ENVIRONMENT_FLAG }}
