@@ -203,14 +203,16 @@ jobs:
           TF_ENV: ${{ needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG }}
         working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
-      - name: Run Ansible-playbook
-        run: |
-          ansible-playbook -i inventoryes/hosts.ini setup.yml
-        working-directory: ${{ env.ANS_EXECUTE_PATH }}
+      # - name: Run Ansible-playbook
+      #   run: |
+      #     ansible-playbook -i inventoryes/hosts.ini setup.yml
+      #   working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
   ServerSpec-Check:
     name: "ServerSpec-Check"
-    needs: Ansible-App-Deploy
+    needs: |
+      - Ansible-App-Deploy
+      - Terraform-Deploy
     #needs: Terraform-Deploy
     runs-on: ubuntu-latest
     steps:
