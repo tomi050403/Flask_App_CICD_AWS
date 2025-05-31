@@ -95,3 +95,9 @@ variable "rds_db_name" {
 variable "private_host_zone" {
   type = string
 }
+
+variable "public_host_zone" {
+  type      = string
+  sensitive = true
+}
+
