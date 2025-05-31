@@ -16,10 +16,10 @@ defaults:
 env:
   AWS_REGION: ap-northeast-1
   TF_VERSION: 1.11.2
-  TF_EXECUTE_PATH: 01_terraform/flask-app/environments/prod/
+  TF_EXECUTE_PATH: 01_terraform/flask-app/environments/dev/
 
   TF_VAR_project: flask-app
-  TF_VAR_environment: prod
+  TF_VAR_environment: dev
   TF_VAR_region: ap-northeast-1
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
   TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
@@ -61,7 +61,7 @@ jobs:
           terraform init \
             -backend-config="bucket=${{ secrets.BED_01_BACKEND_BUCKET }}" \
             -backend-config="key=${{ secrets.BED_02_BACKEND_KEY }}" \
-            -backend-config="region=ap-northeast-1"
+            -backend-config="region="ap-northeast-1""
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
       - name: terraform validate
