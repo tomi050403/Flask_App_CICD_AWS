@@ -198,7 +198,9 @@ jobs:
 
       - name: Setup TF-ENVIRONMENT
         run: |
-          sed -i "s/TF-ENVIRONMENT/${needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG}/" roles/WEB_01_Set-Up-Websv/templates/flask-app.conf.j2
+          sed -i "s/TF-ENVIRONMENT/${TF_ENV}/" roles/WEB_01_Set-Up-Websv/templates/flask-app.conf.j2
+        env:
+          TF_ENV: ${{ needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG }}
         working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
       - name: Run Ansible-playbook
@@ -258,7 +260,9 @@ jobs:
 
       - name: Setup TF-ENVIRONMENT
         run: |
-          sed -i "s/TF-ENVIRONMENT/${needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG}/" spec/web-sv/web_spec.rb
+          sed -i "s/TF-ENVIRONMENT/${TF_ENV}/" spec/web-sv/web_spec.rb
+        env:
+          TF_ENV: ${{ needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG }}
         working-directory: ${{ env.SPEC_EXECUTE_PATH }} 
 
       - name: Set SSH Key
