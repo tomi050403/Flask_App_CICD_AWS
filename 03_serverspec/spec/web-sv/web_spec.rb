@@ -18,11 +18,11 @@ describe port(80) do
   it { should be_listening }
 end
 
-describe host('app.dev.instance.privatelocal') do
+describe host('app.TF-ENVIRONMENT.instance.privatelocal') do
   it { should be_resolvable }
 end
   
-describe command('curl http://app.dev.instance.privatelocal:8000 -o /dev/null -w "%{http_code}\n" -s') do
+describe command('curl http://app.TF-ENVIRONMENT.instance.privatelocal:8000 -o /dev/null -w "%{http_code}\n" -s') do
   its(:stdout) { should match /^200$/ }
 end
 

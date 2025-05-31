@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - edit/readme
+      - fix/https_module
     paths:
       - .trigger/change.txt
   workflow_dispatch:
@@ -23,6 +23,7 @@ env:
   TF_VAR_region: ap-northeast-1
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
   TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
+  TF_VAR_public_host_zone: ${{ vars.PUBLIC_HOST_ZONE }}
 
   ANS_EXECUTE_PATH: 02_ansible/
 
@@ -88,6 +89,7 @@ jobs:
 #      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
     outputs: 
       TF_STATE_FLAG: ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
+      TF_ENVIRONMENT_FLAG: ${{ steps.tf-ENVIRONMENT.outputs.TF_ENVIRONMENT_FLAG }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -127,11 +129,20 @@ jobs:
           echo "TF_STATE_FLAG=$SET_TF_COUNT" >> $GITHUB_OUTPUT
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
+      - name: terraform check ENVIRONMENT
+        id: tf-ENVIRONMENT
+        run: |
+          set +e
+          SET_TF_ENV=$(terraform console <<< "var.environment" | tr -d '"')
+          echo "TF_ENVIRONMENT_FLAG=$SET_TF_ENV" >> $GITHUB_OUTPUT
+        working-directory: ${{ env.TF_EXECUTE_PATH }}
+
   Ansible-App-Deploy:
     name: "Ansible-App-Deploy"
     needs: Terraform-Deploy
-    if: |
-      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '56'
+#     if: |
+#       needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '56'
+# #      needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '56'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -183,6 +194,11 @@ jobs:
           sed -i "s/DB_USERPASS/${db_userpass}/" vars/sec.yml
           sed -i "s/GITHUB_USER/${git_user}/" vars/sec.yml
           sed -i "s/GITHUB_TOKEN/${git_token}/" vars/sec.yml
+        working-directory: ${{ env.ANS_EXECUTE_PATH }}
+
+      - name: Setup TF-ENVIRONMENT
+        run: |
+          sed -i "s/TF-ENVIRONMENT/${needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG}/" roles/WEB_01_Set-Up-Websv/templates/flask-app.conf.j2
         working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
       - name: Run Ansible-playbook
@@ -238,6 +254,11 @@ jobs:
         run: |
           db_host_spec=$(cat rds_endpoint.txt)
           sed -i "s/RDS_ENDPOINT/${db_host_spec}/g" spec/app-sv/app_spec.rb
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }} 
+
+      - name: Setup TF-ENVIRONMENT
+        run: |
+          sed -i "s/TF-ENVIRONMENT/${needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG}/" spec/web-sv/web_spec.rb
         working-directory: ${{ env.SPEC_EXECUTE_PATH }} 
 
       - name: Set SSH Key

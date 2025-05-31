@@ -64,13 +64,18 @@ module "alb" {
   project     = var.project
   environment = var.environment
   region      = var.region
-
-  web_sg_id        = module.security.web_sg_id
-  alb_sg_id        = module.security.alb_sg_id
-  vpc_id           = module.network.vpc_id
-  public_subnet_1a = module.network.public_subnet_1a
-  public_subnet_1c = module.network.public_subnet_1c
-  web_server_id    = module.compute.web_server_id
+ 
+  web_sg_id             = module.security.web_sg_id
+  alb_sg_id             = module.security.alb_sg_id
+  vpc_id                = module.network.vpc_id
+  public_subnet_1a      = module.network.public_subnet_1a
+  public_subnet_1c      = module.network.public_subnet_1c
+  private_subnet_1a_web = module.network.private_subnet_1a_web
+  private_subnet_1c_web = module.network.private_subnet_1c_web
+  web_server_id         = module.compute.web_server_id
+  
+  cert_alb_arn     = module.route53.cert_alb_arn
+  public_host_zone = module.route53.public_host_zone
 }
 
 # ---
@@ -145,16 +150,18 @@ module "iam" {
 # ---
 # Route53
 # ---
-module "Route53" {
+module "route53" {
   source = "../../modules/route53"
 
   project     = var.project
   environment = var.environment
   region      = var.region
 
-  private_host_zone = var.private_host_zone
+  private_host_zone  = var.private_host_zone
+  public_host_zone   = var.public_host_zone
 
   vpc_id                    = module.network.vpc_id
   appsv_instance_private_ip = module.compute.appsv_instance_private_ip
+  alb_dns_name              = module.alb.alb_dns_name
+  alb_zone_id               = module.alb.alb_zone_id
 }
-

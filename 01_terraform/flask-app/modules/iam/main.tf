@@ -41,9 +41,3 @@ resource "aws_iam_role_policy_attachment" "ec2_iam_role_ssm_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-########################################################
-# Outputs
-########################################################
-output "ec2_profile_name" {
-  value = aws_iam_instance_profile.ec2_profile.name
-}

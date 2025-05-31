@@ -13,7 +13,17 @@ resource "aws_security_group" "alb_sg" {
     Env     = var.environment
   }
 }
+resource "aws_security_group_rule" "alb_sg_in_https" {
+  count = var.environment == "prod" ? 1 : 0
+  security_group_id = aws_security_group.alb_sg.id
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_blocks       = ["${var.ALB_from_IP}"]
+}
 resource "aws_security_group_rule" "alb_sg_in_http" {
+  count = var.environment == "prod" ? 0 : 1
   security_group_id = aws_security_group.alb_sg.id
   type              = "ingress"
   protocol          = "tcp"
@@ -21,6 +31,7 @@ resource "aws_security_group_rule" "alb_sg_in_http" {
   to_port           = 80
   cidr_blocks       = ["${var.ALB_from_IP}"]
 }
+
 resource "aws_security_group_rule" "alb_sg_out_default" {
   security_group_id = aws_security_group.alb_sg.id
   type              = "egress"
@@ -112,21 +123,3 @@ resource "aws_security_group_rule" "rds_sg_in_mysql" {
 }
 
 
-########################################################
-# Outputs
-########################################################
-output "alb_sg_id" {
-  value = aws_security_group.alb_sg.id
-}
-
-output "web_sg_id" {
-  value = aws_security_group.websv_sg.id
-}
-
-output "app_sg_id" {
-  value = aws_security_group.appsv_sg.id
-}
-
-output "rds_sg_id" {
-  value = aws_security_group.rds_sg.id
-}
