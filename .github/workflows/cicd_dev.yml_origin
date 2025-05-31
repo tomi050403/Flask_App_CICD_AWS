@@ -1,4 +1,4 @@
-name: FLASK_APP_CICD_AWS_prod_https
+name: FLASK_APP_CICD_AWS_dev
 
 on:
   push:
@@ -16,10 +16,10 @@ defaults:
 env:
   AWS_REGION: ap-northeast-1
   TF_VERSION: 1.11.2
-  TF_EXECUTE_PATH: 01_terraform/flask-app/environments/prod/
+  TF_EXECUTE_PATH: 01_terraform/flask-app/environments/dev/
 
   TF_VAR_project: flask-app
-  TF_VAR_environment: prod
+  TF_VAR_environment: dev
   TF_VAR_region: ap-northeast-1
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
   TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
@@ -85,8 +85,8 @@ jobs:
     name: "Terraform-Deploy"
     needs: Terraform-Preview
     if: |
-#      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
-      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
+      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
+#      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
     outputs: 
       TF_STATE_FLAG: ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
       TF_ENVIRONMENT_FLAG: ${{ steps.tf-ENVIRONMENT.outputs.TF_ENVIRONMENT_FLAG }}
@@ -203,10 +203,10 @@ jobs:
           TF_ENV: ${{ needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG }}
         working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
-      - name: Run Ansible-playbook
-        run: |
-          ansible-playbook -i inventoryes/hosts.ini setup.yml
-        working-directory: ${{ env.ANS_EXECUTE_PATH }}
+      # - name: Run Ansible-playbook
+      #   run: |
+      #     ansible-playbook -i inventoryes/hosts.ini setup.yml
+      #   working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
   ServerSpec-Check:
     name: "ServerSpec-Check"
