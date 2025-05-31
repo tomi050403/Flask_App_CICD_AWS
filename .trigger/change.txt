@@ -5,3 +5,4 @@ applytest3 (ansible,serverspec check)
 applytest4 (ansible,serverspec check)
 applytest5 (ansible,serverspec check)
 applytest  serverspec check 2
+prod check
