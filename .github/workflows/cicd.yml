@@ -142,8 +142,10 @@ jobs:
     name: "Ansible-App-Deploy"
     needs: Terraform-Deploy
 #     if: |
+## dev
 #       needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '56'
-# #      needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '56'
+## prod
+#       needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '62'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -204,10 +206,10 @@ jobs:
           TF_ENV: ${{ needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG }}
         working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
-      - name: Run Ansible-playbook
-        run: |
-          ansible-playbook -i inventoryes/hosts.ini setup.yml
-        working-directory: ${{ env.ANS_EXECUTE_PATH }}
+      # - name: Run Ansible-playbook
+      #   run: |
+      #     ansible-playbook -i inventoryes/hosts.ini setup.yml
+      #   working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
   ServerSpec-Check:
     name: "ServerSpec-Check"
@@ -271,7 +273,7 @@ jobs:
       - name: Set SSH Key
         run: |
           echo -e "${{ secrets.EC2_PRIVATE_KEY }}" > GHA-FLASK-APP.pem
-          chmod 400 GHA-FLASK-APP.pemMore actions
+          chmod 400 GHA-FLASK-APP.pem
         working-directory: ${{ env.SPEC_EXECUTE_PATH }}
 
       - name: ruby setup
