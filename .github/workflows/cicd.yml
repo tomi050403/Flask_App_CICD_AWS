@@ -210,7 +210,7 @@ jobs:
 
   ServerSpec-Check:
     name: "ServerSpec-Check"
-    needs: |
+    needs:
       - Ansible-App-Deploy
       - Terraform-Deploy
     #needs: Terraform-Deploy
