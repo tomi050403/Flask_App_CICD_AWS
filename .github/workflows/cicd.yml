@@ -1,4 +1,4 @@
-name: FLASK_APP_CICD_AWS_dev
+name: FLASK_APP_CICD_AWS_devMore actions
 
 on:
   push:
@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: terraform setup
         uses: hashicorp/setup-terraform@v3
         with:
@@ -94,7 +94,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: terraform setup
         uses: hashicorp/setup-terraform@v3
         with:
@@ -213,7 +213,7 @@ jobs:
     needs:
       - Ansible-App-Deploy
       - Terraform-Deploy
-    #needs: Terraform-Deploy
+#needs: Terraform-Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -270,7 +270,7 @@ jobs:
       - name: Set SSH Key
         run: |
           echo -e "${{ secrets.EC2_PRIVATE_KEY }}" > GHA-FLASK-APP.pem
-          chmod 400 GHA-FLASK-APP.pem
+          chmod 400 GHA-FLASK-APP.pemMore actions
         working-directory: ${{ env.SPEC_EXECUTE_PATH }}
 
       - name: ruby setup
