@@ -158,13 +158,13 @@ jobs:
       - name: Get EC2 instance id
         run: |
           aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=flask-app-dev-appsv" \
+            --filters "Name=tag:Name,Values=flask-app-${{ env.TF_VAR_environment }}-appsv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output text > app-i.txt
 
           aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=flask-app-dev-websv" \
+            --filters "Name=tag:Name,Values=flask-app-${{ env.TF_VAR_environment }}-websv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output text > web-i.txt
