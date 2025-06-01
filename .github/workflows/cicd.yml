@@ -16,10 +16,10 @@ defaults:
 env:
   AWS_REGION: ap-northeast-1
   TF_VERSION: 1.11.2
-  TF_EXECUTE_PATH: 01_terraform/flask-app/environments/prod/
+  TF_EXECUTE_PATH: 01_terraform/flask-app/environments/
 
   TF_VAR_project: flask-app
-  TF_VAR_environment: prod
+  TF_VAR_environment: dev
   TF_VAR_region: ap-northeast-1
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
   TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
@@ -62,7 +62,7 @@ jobs:
             -backend-config="bucket=${{ secrets.BED_01_BACKEND_BUCKET }}" \
             -backend-config="key=flask-app/${{ env.TF_VAR_environment }}/terraform.tfstate" \
             -backend-config="region="ap-northeast-1""
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
       - name: terraform validate
         run: |
@@ -79,7 +79,7 @@ jobs:
             -detailed-exitcode
           SET_EXIT_CODE=$?
           echo "TF_PLAN_EXITCODE=$SET_EXIT_CODE" >> $GITHUB_OUTPUT
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
   Terraform-Deploy:
     name: "Terraform-Deploy"
@@ -114,13 +114,13 @@ jobs:
             -backend-config="bucket=${{ secrets.BED_01_BACKEND_BUCKET }}" \
             -backend-config="key=flask-app/${{ env.TF_VAR_environment }}/terraform.tfstate" \
             -backend-config="region="ap-northeast-1""
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
       - name: terraform apply
         if: contains(github.event.head_commit.message, '[apply]')
         run: |
           terraform apply -auto-approve
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
       - name: terraform state check flag
         id: tf-flag
@@ -128,7 +128,7 @@ jobs:
           set +e
           SET_TF_COUNT=$(terraform state list | grep .aws_ | wc -l)
           echo "TF_STATE_FLAG=$SET_TF_COUNT" >> $GITHUB_OUTPUT
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
       - name: terraform check ENVIRONMENT
         id: tf-ENVIRONMENT
@@ -136,7 +136,7 @@ jobs:
           set +e
           SET_TF_ENV=$(terraform console <<< "var.environment" | tr -d '"')
           echo "TF_ENVIRONMENT_FLAG=$SET_TF_ENV" >> $GITHUB_OUTPUT
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
   Ansible-App-Deploy:
     name: "Ansible-App-Deploy"
