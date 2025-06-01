@@ -60,7 +60,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="bucket=${{ secrets.BED_01_BACKEND_BUCKET }}" \
-            -backend-config="key=${{ secrets.BED_02_BACKEND_KEY }}" \
+            -backend-config="key=flask-app/${{ env.TF_VAR_environment }}/terraform.tfstate" \
             -backend-config="region="ap-northeast-1""
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
@@ -112,7 +112,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="bucket=${{ secrets.BED_01_BACKEND_BUCKET }}" \
-            -backend-config="key=${{ secrets.BED_02_BACKEND_KEY }}" \
+            -backend-config="key=flask-app/${{ env.TF_VAR_environment }}/terraform.tfstate" \
             -backend-config="region="ap-northeast-1""
         working-directory: ${{ env.TF_EXECUTE_PATH }}
 
@@ -206,17 +206,16 @@ jobs:
           TF_ENV: ${{ needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG }}
         working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
-      # - name: Run Ansible-playbook
-      #   run: |
-      #     ansible-playbook -i inventoryes/hosts.ini setup.yml
-      #   working-directory: ${{ env.ANS_EXECUTE_PATH }}
+      - name: Run Ansible-playbook
+        run: |
+          ansible-playbook -i inventoryes/hosts.ini setup.yml
+        working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
   ServerSpec-Check:
     name: "ServerSpec-Check"
     needs:
       - Ansible-App-Deploy
       - Terraform-Deploy
-#needs: Terraform-Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
