@@ -8,4 +8,4 @@ applytest  serverspec check 2
 prod check 2
 prod  Setup variablesFile check 3
  serverspec retry 3
-prod cicd terraform init check 
+prod cicd terraform init check 2

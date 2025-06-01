@@ -85,7 +85,7 @@ jobs:
     name: "Terraform-Deploy"
     needs: Terraform-Preview
     if: |
-      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
+      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == 2'
 #      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
 #      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
     outputs: 
