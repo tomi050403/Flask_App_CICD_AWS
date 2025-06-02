@@ -16,10 +16,9 @@ defaults:
 env:
   AWS_REGION: ap-northeast-1
   TF_VERSION: 1.11.2
-  TF_EXECUTE_PATH: 01_terraform/flask-app/environments/
 
   TF_VAR_project: flask-app
-  TF_VAR_environment: dev
+  TF_VAR_environment: prod
   TF_VAR_region: ap-northeast-1
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
   TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
@@ -86,8 +85,6 @@ jobs:
     needs: Terraform-Preview
     if: |
       needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
-#      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
-#      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
     outputs: 
       TF_STATE_FLAG: ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
       TF_ENVIRONMENT_FLAG: ${{ steps.tf-ENVIRONMENT.outputs.TF_ENVIRONMENT_FLAG }}
@@ -141,11 +138,9 @@ jobs:
   Ansible-App-Deploy:
     name: "Ansible-App-Deploy"
     needs: Terraform-Deploy
-#     if: |
-## dev
-#       needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '56'
-## prod
-#       needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '62'
+    if: >
+      (env.TF_VAR_environment == 'dev' && needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '56') ||
+      (env.TF_VAR_environment == 'prod' && needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '62')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -290,3 +285,4 @@ jobs:
         run: |
           bundle exec rake spec
         working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+        

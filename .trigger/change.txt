@@ -9,4 +9,5 @@ prod check 2
 prod  Setup variablesFile check 3
  serverspec retry 3
 prod cicd terraform init check 3
-dev check executepath
+dev check executepath 
+prod cicd + dispatch check
