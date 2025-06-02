@@ -11,3 +11,4 @@ prod  Setup variablesFile check 3
 prod cicd terraform init check 3
 dev check executepath 
 prod cicd + dispatch check 2
+dev check
