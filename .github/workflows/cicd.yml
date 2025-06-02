@@ -1,10 +1,9 @@
-name: FLASK_APP_CICD_AWS_dev
+name: FLASK_APP_CICD_AWS_https
 
 on:
   push:
     branches:
       - main
-      - edit/readme
     paths:
       - .trigger/change.txt
   workflow_dispatch:
@@ -16,13 +15,13 @@ defaults:
 env:
   AWS_REGION: ap-northeast-1
   TF_VERSION: 1.11.2
-  TF_EXECUTE_PATH: 01_terraform/flask-app/environments/dev/
 
   TF_VAR_project: flask-app
-  TF_VAR_environment: dev
+  TF_VAR_environment: prod
   TF_VAR_region: ap-northeast-1
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
   TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
+  TF_VAR_public_host_zone: ${{ vars.PUBLIC_HOST_ZONE }}
 
   ANS_EXECUTE_PATH: 02_ansible/
 
@@ -42,7 +41,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: terraform setup
         uses: hashicorp/setup-terraform@v3
         with:
@@ -59,9 +58,9 @@ jobs:
         run: |
           terraform init \
             -backend-config="bucket=${{ secrets.BED_01_BACKEND_BUCKET }}" \
-            -backend-config="key=${{ secrets.BED_02_BACKEND_KEY }}" \
+            -backend-config="key=flask-app/${{ env.TF_VAR_environment }}/terraform.tfstate" \
             -backend-config="region="ap-northeast-1""
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
       - name: terraform validate
         run: |
@@ -78,21 +77,21 @@ jobs:
             -detailed-exitcode
           SET_EXIT_CODE=$?
           echo "TF_PLAN_EXITCODE=$SET_EXIT_CODE" >> $GITHUB_OUTPUT
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
   Terraform-Deploy:
     name: "Terraform-Deploy"
     needs: Terraform-Preview
     if: |
       needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'
-#      needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '0'
     outputs: 
       TF_STATE_FLAG: ${{ steps.tf-flag.outputs.TF_STATE_FLAG }}
+      TF_ENVIRONMENT_FLAG: ${{ steps.tf-ENVIRONMENT.outputs.TF_ENVIRONMENT_FLAG }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: terraform setup
         uses: hashicorp/setup-terraform@v3
         with:
@@ -109,15 +108,15 @@ jobs:
         run: |
           terraform init \
             -backend-config="bucket=${{ secrets.BED_01_BACKEND_BUCKET }}" \
-            -backend-config="key=${{ secrets.BED_02_BACKEND_KEY }}" \
+            -backend-config="key=flask-app/${{ env.TF_VAR_environment }}/terraform.tfstate" \
             -backend-config="region="ap-northeast-1""
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
       - name: terraform apply
         if: contains(github.event.head_commit.message, '[apply]')
         run: |
           terraform apply -auto-approve
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
       - name: terraform state check flag
         id: tf-flag
@@ -125,13 +124,23 @@ jobs:
           set +e
           SET_TF_COUNT=$(terraform state list | grep .aws_ | wc -l)
           echo "TF_STATE_FLAG=$SET_TF_COUNT" >> $GITHUB_OUTPUT
-        working-directory: ${{ env.TF_EXECUTE_PATH }}
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
+
+      - name: terraform check ENVIRONMENT
+        id: tf-ENVIRONMENT
+        run: |
+          set +e
+          SET_TF_ENV=$(terraform console <<< "var.environment" | tr -d '"')
+          echo "TF_ENVIRONMENT_FLAG=$SET_TF_ENV" >> $GITHUB_OUTPUT
+        working-directory: 01_terraform/flask-app/environments/${{ env.TF_VAR_environment }}
 
   Ansible-App-Deploy:
     name: "Ansible-App-Deploy"
     needs: Terraform-Deploy
-    if: |
-      needs.terraform-Deploy.outputs.TF_STATE_FLAG == '56'
+    if: >
+      (needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG == 'dev' && needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '56') ||
+      (needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG == 'prod' && needs.Terraform-Deploy.outputs.TF_STATE_FLAG == '62')
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -146,13 +155,13 @@ jobs:
       - name: Get EC2 instance id
         run: |
           aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=flask-app-dev-appsv" \
+            --filters "Name=tag:Name,Values=flask-app-${{ env.TF_VAR_environment }}-appsv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output text > app-i.txt
 
           aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=flask-app-dev-websv" \
+            --filters "Name=tag:Name,Values=flask-app-${{ env.TF_VAR_environment }}-websv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output text > web-i.txt
@@ -172,9 +181,9 @@ jobs:
 
       - name: Setup variablesFile
         run: |
-          db_host=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_HOST)
-          db_username=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_USERNAME)
-          db_userpass=$( aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_USERPASS)
+          db_host=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-${{ env.TF_VAR_environment }}/DB_HOST)
+          db_username=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-${{ env.TF_VAR_environment }}/DB_USERNAME)
+          db_userpass=$( aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-${{ env.TF_VAR_environment }}/DB_USERPASS)
           git_user="${{ secrets.SET_GITHUB_USER }}"
           git_token="${{ secrets.SET_GITHUB_TOKEN }}"
 
@@ -185,6 +194,13 @@ jobs:
           sed -i "s/GITHUB_TOKEN/${git_token}/" vars/sec.yml
         working-directory: ${{ env.ANS_EXECUTE_PATH }}
 
+      - name: Setup TF-ENVIRONMENT
+        run: |
+          sed -i "s/TF-ENVIRONMENT/${TF_ENV}/" roles/WEB_01_Set-Up-Websv/templates/flask-app.conf.j2
+        env:
+          TF_ENV: ${{ needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG }}
+        working-directory: ${{ env.ANS_EXECUTE_PATH }}
+
       - name: Run Ansible-playbook
         run: |
           ansible-playbook -i inventoryes/hosts.ini setup.yml
@@ -192,8 +208,9 @@ jobs:
 
   ServerSpec-Check:
     name: "ServerSpec-Check"
-    needs: Ansible-App-Deploy
-    #needs: Terraform-Deploy
+    needs:
+      - Ansible-App-Deploy
+      - Terraform-Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -208,13 +225,13 @@ jobs:
       - name: Get EC2 instance id
         run: |
           aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=flask-app-dev-appsv" \
+            --filters "Name=tag:Name,Values=flask-app-${{ env.TF_VAR_environment }}-appsv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output text > app-i.txt
 
           aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=flask-app-dev-websv" \
+            --filters "Name=tag:Name,Values=flask-app-${{ env.TF_VAR_environment }}-websv" \
             "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output text > web-i.txt
@@ -229,7 +246,7 @@ jobs:
       - name: Get RDS Endpoint and mask
         run: |
           set +e
-          db_host_spec=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-dev/DB_HOST)
+          db_host_spec=$(aws ssm get-parameter --with-decryption --query "Parameter.Value" --output text --name /flask-app-${{ env.TF_VAR_environment }}/DB_HOST)
           echo "::add-mask::$db_host_spec"
           echo "$db_host_spec" >> rds_endpoint.txt
         working-directory: ${{ env.SPEC_EXECUTE_PATH }}
@@ -238,6 +255,13 @@ jobs:
         run: |
           db_host_spec=$(cat rds_endpoint.txt)
           sed -i "s/RDS_ENDPOINT/${db_host_spec}/g" spec/app-sv/app_spec.rb
+        working-directory: ${{ env.SPEC_EXECUTE_PATH }} 
+
+      - name: Setup TF-ENVIRONMENT
+        run: |
+          sed -i "s/TF-ENVIRONMENT/${TF_ENV}/" spec/web-sv/web_spec.rb
+        env:
+          TF_ENV: ${{ needs.Terraform-Deploy.outputs.TF_ENVIRONMENT_FLAG }}
         working-directory: ${{ env.SPEC_EXECUTE_PATH }} 
 
       - name: Set SSH Key
@@ -261,3 +285,4 @@ jobs:
         run: |
           bundle exec rake spec
         working-directory: ${{ env.SPEC_EXECUTE_PATH }}
+        

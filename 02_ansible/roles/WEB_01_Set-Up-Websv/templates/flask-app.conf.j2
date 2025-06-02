@@ -1,9 +1,9 @@
 server {
     listen 80;
-    server_name app.dev.instance.privatelocal;
+    server_name app.TF-ENVIRONMENT.instance.privatelocal;
 
     location / {
-        proxy_pass http://app.dev.instance.privatelocal:8000;
+        proxy_pass http://app.TF-ENVIRONMENT.instance.privatelocal:8000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
     }
