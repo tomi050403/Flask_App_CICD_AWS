@@ -4,7 +4,7 @@
 # ---
 resource "aws_acm_certificate" "cert_alb" {
   count             = var.environment == "prod" ? 1 : 0
-  domain_name       = "${var.project}-${var.environment}-alb.${var.public_host_zone}"
+  domain_name       = "*.${var.public_host_zone}"
   validation_method = "DNS"
 
   lifecycle {
