@@ -54,22 +54,22 @@ resource "aws_route53_record" "public_host_zone_A_record" {
 
 resource "aws_route53_record" "public_host_zone_cname_record" {
   for_each = var.environment == "prod" ? {
-    for dvo in aws_acm_certificate.cert_alb[0].domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.cert_alb[0].domain_validation_options : 
+    dvo.domain_name => {
       name   = dvo.resource_record_name
       type   = dvo.resource_record_type
       record = dvo.resource_record_value
     }
   } : {}
-
-  allow_overwrite = true
   zone_id         = data.aws_route53_zone.route53_public_host_zone[0].id
   name            = each.value.name
   type            = each.value.type
-  ttl             = 600
+  ttl             = 300
   records         = [each.value.record]
 
   depends_on = [
     aws_acm_certificate.cert_alb
   ]
 }
+
 
