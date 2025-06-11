@@ -6,9 +6,7 @@ on:
       - main
       - fix/https_module
     paths:
-      - 01_terraform/flask-app/*
-      - 02_ansible/*
-      - 03_serverspec/*
+      - .trigger/change.txt
 
 defaults:
   run:
