@@ -8,7 +8,7 @@
 
 - name: 02 Gunicorn run
   become_user: "{{ project_users }}"
-  command: poetry run gunicorn -b 0.0.0.0 flaskr:app --daemon
+  command: poetry run gunicorn -b 0.0.0.0 flaskr:app --daemon --timeout
   args:
     chdir: /home/ec2-user/flask-app/flaskr
     
