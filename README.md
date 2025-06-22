@@ -24,9 +24,7 @@
 ## Development
 **TF_VAR_environment**を**dev**としてワークフローにpushした時の構成。<br>
 ![image](figure/figure_dev.png)  <br>
-## Produbtion
+## Produｃtion
 **TF_VAR_environment**を**prod**としてワークフローにpushした時の構成。
-- Developmentの構成を独自ドメインにてHTTPS化を追加。<br>
+- Developmentと同様の構成について、独自ドメインにてHTTPS化するにあたり関連する部分を追加。<br>
 ![image](figure/figure_add_prod.png)  <br>
-
----
