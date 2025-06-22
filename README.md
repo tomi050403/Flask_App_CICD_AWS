@@ -25,7 +25,7 @@
 **TF_VAR_environment**を**dev**としてワークフローにpushした時の構成。<br>
 - terraformのリソース構築範囲は赤破線部分となります。
 ![image](figure/figure_dev.png)  <br>
-## Produｃtion
+## Production
 **TF_VAR_environment**を**prod**としてワークフローにpushした時の構成。
 - terraformのリソース構築範囲は赤破線部分となります。
 - Developmentとの差分として、同様の構成について独自ドメインにてHTTPS化するにあたり関連する部分が追加されております。<br>
