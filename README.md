@@ -1,6 +1,5 @@
 # Flask_App_CICD_AWS
 
-
 ## 概要
 
 このリポジトリは、自作Flaskアプリケーション（[flask-app](https://github.com/tomi050403/flask-app)）を対象に、
@@ -8,25 +7,19 @@
 
 ---
 
-## ディレクトリ構成
-
-
-
----
-
 ## ワークフロー
 
-| ジョブ | 処理概要 | ステップ概要（要点）| 実行条件・フロー制御 |
-| ------ | -------- | --------------------- | -------------------- |
-| **Terraform-Preview**  | 構文チェックおよび変更差分検証 | Terraform `init` / `validate` / `plan -detailed-exitcode`<br>→ Plan の終了コードを `outputs.TF_PLAN_EXITCODE` に保存 | 常に実行 |
-| **Terraform-Deploy**   | 変更がある場合インフラデプロイ | Terrform `init`<br> → `apply -auto-approve`（コミットメッセージに `[apply]` がある時）<br>→ `state list` でリソース数カウント<br> | `needs.Terraform-Preview.outputs.TF_PLAN_EXITCODE == '2'`（差分あり）のとき実行 |
-| **Ansible-App-Deploy** | EC2へのアプリデプロイ   | Inventory/Vars 書換 → SSH キー配置 → secvarsファイル,j2ファイル書換 → Ansible `setup.yml` 実行 | Terraform-Deploy 完了後かつ<br>環境毎に規定のリソース数が構築されている<br>• dev環境 **&&** TF\_STATE\_FLAG==56<br>• prod環境 **&&** TF\_STATE\_FLAG==62 |
-| **ServerSpec-Check**   | 構成テスト | spec\_helper.rb 書換 → RDS Endpoint マスク → SSH キー配置 → Ruby/Bundler セットアップ → `bundle exec rake spec` | Terraform-Deploy **および** Ansible-App-Deploy 完了後に実行（needs で両方を待機）|
+| ジョブ | 処理概要 | ステップ概要（要点）|
+| ------ | -------- | --------------------- |
+| **Terraform-Preview**  | ・構文チェック <br>・変更差分検証 | terraform `init` / `validate` <br>　→構文チェック <br>terraform `plan -detailed-exitcode`<br>　→ Plan の終了コード（差分有無）を保存 |
+| **Terraform-Deploy**   | ・インフラデプロイ <br>・リソース数カウント|　ジョブの実行条件：*更新差分が**有り***の場合<br>terrform `apply -auto-approve`<br>　→コミットメッセージに `[apply]` がある場合デプロイ <br> terraform `state list` <br>　→リソース数をカウントし、保存|
+| **Ansible-App-Deploy** | ・各種設定ファイルの更新（情報取得）<br>・EC2へのアプリデプロイ | ジョブの実行条件：リソース数が規定の数ある場合<br>AWSリソースから必要情報を取得し、各種vars,j2ファイルを更新 <br>ansible-playbook `setup.yml` の実行 |
+| **ServerSpec-Check**   | ・各種設定ファイルの更新（情報取得）<br>・構成テスト | ジョブの実行条件：前ジョブの完了<br>AWSリソースから必要情報を取得し、helper.rbおよびテストコードを更新<br>Ruby/Bundler セットアップ<br>`bundle exec rake spec` 実行|
 
 ---
 
 ## 構成図
-being/Flask_App_CICD_AWS/.github/workflows/cicd.ymlにてTF_VAR_environmentの値を変更することで構成内容を変化。
+.github/workflows/cicd.ymlにてTF_VAR_environmentの値を変更することで構成内容を変化。
 
 ## Development
 **TF_VAR_environment**を**dev**としてワークフローにpushした時の構成。<br>
