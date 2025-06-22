@@ -12,21 +12,21 @@
 | ジョブ | 処理概要 | ステップ概要（要点）|
 | ------ | -------- | --------------------- |
 | **Terraform-Preview**  | ・構文チェック <br>・変更差分検証 | terraform `init` / `validate` <br>　→構文チェック <br>terraform `plan -detailed-exitcode`<br>　→ Plan の終了コード（差分有無）を保存 |
-| **Terraform-Deploy**   | ・インフラデプロイ <br>・リソース数カウント|　ジョブの実行条件：*更新差分が**有り***の場合<br>terrform `apply -auto-approve`<br>　→コミットメッセージに `[apply]` がある場合デプロイ <br> terraform `state list` <br>　→リソース数をカウントし、保存|
-| **Ansible-App-Deploy** | ・各種設定ファイルの更新（情報取得）<br>・EC2へのアプリデプロイ | ジョブの実行条件：リソース数が規定の数ある場合<br>AWSリソースから必要情報を取得し、各種vars,j2ファイルを更新 <br>ansible-playbook `setup.yml` の実行 |
-| **ServerSpec-Check**   | ・各種設定ファイルの更新（情報取得）<br>・構成テスト | ジョブの実行条件：前ジョブの完了<br>AWSリソースから必要情報を取得し、helper.rbおよびテストコードを更新<br>Ruby/Bundler セットアップ<br>`bundle exec rake spec` 実行|
+| **Terraform-Deploy**   | ジョブの実行条件：更新差分が**有り**の場合<br>・インフラデプロイ <br>・リソース数カウント|terrform `apply -auto-approve`<br>　→コミットメッセージに `[apply]` がある場合デプロイ <br> terraform `state list` <br>　→リソース数をカウントし、保存|
+| **Ansible-App-Deploy** | ジョブの実行条件：リソース数が規定の数ある場合<br>・各種設定ファイルの更新（情報取得）<br>・EC2へのアプリデプロイ | AWSリソース必要情報を取得<br>　→各種vars,j2ファイルを更新 <br>ansible-playbook `setup.yml` 実行 |
+| **ServerSpec-Check**   | ジョブの実行条件：前ジョブの完了<br>・各種設定ファイルの更新（情報取得）<br>・構成テスト | AWSリソース必要情報を取得<br>　→helper.rb,テストコードを更新<br>Ruby/Bundler セットアップ<br>`bundle exec rake spec` 実行|
 
 ---
 
 ## 構成図
-.github/workflows/cicd.ymlにてTF_VAR_environmentの値を変更することで構成内容を変化。
+.github/workflows/cicd.ymlにてTF_VAR_environmentの値（dev or prod）を変更することで構成内容を変化。
 
 ## Development
 **TF_VAR_environment**を**dev**としてワークフローにpushした時の構成。<br>
 ![image](figure/figure_dev.png)  <br>
 ## Produbtion
 **TF_VAR_environment**を**prod**としてワークフローにpushした時の構成。
-- Developmentの構成について独自ドメインにてHTTPS化を追加。<br>
+- Developmentの構成を独自ドメインにてHTTPS化を追加。<br>
 ![image](figure/figure_add_prod.png)  <br>
 
 ---
