@@ -31,3 +31,9 @@
 | **Terraform-Deploy**   | ジョブの実行条件：更新差分が**有り**の場合<br>・インフラデプロイ <br>・リソース数カウント|terrform `apply -auto-approve`<br>　→コミットメッセージに `[apply]` がある場合デプロイ <br> terraform `state list` <br>　→リソース数をカウントし、保存|
 | **Ansible-App-Deploy** | ジョブの実行条件：リソース数が規定の数ある場合<br>・各種設定ファイルの更新（情報取得）<br>・EC2へのアプリデプロイ | AWSリソース必要情報を取得<br>　→各種vars,j2ファイルを更新 <br>ansible-playbook `setup.yml` 実行 |
 | **ServerSpec-Check**   | ジョブの実行条件：前ジョブの完了<br>・各種設定ファイルの更新（情報取得）<br>・構成テスト | AWSリソース必要情報を取得<br>　→helper.rb,テストコードを更新<br>Ruby/Bundler セットアップ<br>`bundle exec rake spec` 実行|
+
+---
+
+## 実行結果
+httpsの接続出来ていることを確認
+![prod実行後のhttps接続確認](figure/https.png)  <br>
