@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>flask sample app | サーバエラー</title>
+    <style>
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        }
+
+        a {
+        text-decoration: none;
+        }
+
+        li {
+        list-style: none;
+        }
+
+        body {
+        font-family: Avenir Next;
+        }
+
+        .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #000000;
+        color: #fff;
+        height: 100px;
+        }
+
+        .header_logo {
+        float: left;
+        padding-left: 40px;
+        }
+
+        .header_logo img {
+        float: left;
+        max-width: 10%;
+        max-height: 10%;
+        display: block;
+        padding: 10px 10px 10px 10px;
+        }
+
+        .header_list {
+        font-size: 36px;
+        display: flex;
+        float: right;
+        }
+
+        .header_list a {
+        color: #fff;
+        }
+
+        a.btn {
+        text-decoration: none;
+        color:rgb(255, 255, 255);
+        }
+
+        a.btn:hover {
+        color: aquamarine;
+        }
+
+        .Home {
+        padding-right: 50px;
+        background-color: #000000;
+        margin-right: 10px;
+        }
+
+        .main {
+        padding: 20px 20px 20px 20px;
+        background-color: #ffffff;
+        height: auto;
+        }
+
+        .main h1 {
+        font-size: 30px;
+        padding: 20px 20px 20px 20px;
+        }
+
+        .section-title {
+        border-bottom: 3px solid #dee7ec;
+        }
+
+        .main_contents {
+        padding: 20px 20px 50px 20px;
+        }
+
+        .main_contents p {
+        font-size: 22px;
+        }
+
+        .footer {
+        background-color: #2f5167;
+        color: #fff;
+        height: 120px;
+        padding: 40px 40px 40px 40px;
+        }
+
+        .footer p {
+        font-size: 18px;
+        }
+        .error-wrapper {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .error-code {
+            font-size: 44px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .error-message {
+            font-size: 28px;
+            margin-top: 20px;
+        }
+        .error-btn {
+            margin-top: 40px;
+            padding: 12px 32px;
+            font-size: 20px;
+            border: 2px solid #2f5167;
+            border-radius: 6px;
+            background: #2f5167;
+            color: #fff;
+            cursor: pointer;
+        }
+        .error-btn:hover {
+            background: #fff;
+            color: #2f5167;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header_logo">
+        </div>        
+        <div class="header_list">
+            <a href="/" class="btn Home">Home</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="error-wrapper">
+            <div class="error-code">500 Error</div>
+            <div class="error-message">
+                There was a problem on the server side.<br>
+                Please try again in a few minutes.
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Python + Flask + MySQL を使った CRUD アプリケーションです</p>
+    </div>
+</body>
+</html>

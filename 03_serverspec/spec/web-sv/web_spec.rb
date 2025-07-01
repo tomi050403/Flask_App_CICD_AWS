@@ -11,7 +11,7 @@ end
 
 describe file('/etc/nginx/conf.d/flask-app.conf') do
   it { should be_file }
-  its(:content) { should match /proxy_pass http:\/\/app.TF-ENVIRONMENT.instance.privatelocal:8000;/ }
+  its(:content) { should match /server app.TF-ENVIRONMENT.instance.privatelocal:8000/ }
 end
 
 describe port(80) do

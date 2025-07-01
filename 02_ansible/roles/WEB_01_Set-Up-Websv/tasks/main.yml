@@ -12,6 +12,13 @@
     dest: /etc/nginx/conf.d/flask-app.conf
     mode: 0644
 
+- name: 02_ex01 set up 50x error page
+  become: yes
+  template:
+    src: templates/flask_50x.html.j2
+    dest: /usr/share/nginx/html/flask_50x.html
+    mode: 0644
+
 - name: 03 Start nginx
   become: yes
   ansible.builtin.command:

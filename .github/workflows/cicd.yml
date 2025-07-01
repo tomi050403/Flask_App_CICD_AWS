@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - main
-    paths:
-      - .trigger/change.txt
-  workflow_dispatch:
+      - fix/https_module
 
 defaults:
   run:
@@ -16,8 +14,8 @@ env:
   AWS_REGION: ap-northeast-1
   TF_VERSION: 1.11.2
 
+  TF_VAR_environment: dev                                 # dev or prod を記入する。
   TF_VAR_project: flask-app
-  TF_VAR_environment: prod
   TF_VAR_region: ap-northeast-1
   TF_VAR_ALB_from_IP: ${{ secrets.SEC_01_ALB_FROM_IP }}
   TF_VAR_rds_username: ${{ secrets.RDS_01_RDS_USERNAME }}
