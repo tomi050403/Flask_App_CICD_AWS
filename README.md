@@ -3,7 +3,8 @@
 ## 概要
 
 このリポジトリは、自作Flaskアプリケーション（[flask-app](https://github.com/tomi050403/flask-app)）を対象に、
-**GitHub Actions** を用いて **CI/CDパイプライン** にて**Terraform / Ansible / Serverspec によってAWS環境への自動構築・構成検証**を実施するためのリポジトリです。
+**GitHub Actions** を用いて **CI/CDパイプライン** にて**Terraform / Ansible / Serverspec によってAWS環境への自動構築・構成検証**を実施するためのリポジトリです。<br>
+※詳細については[GitHubActionsによるCICDパイプライン実装](https://github.com/tomi050403/AWS_Portfolio/blob/main/04_CICD.md)をご覧ください。
 
 ---
 
